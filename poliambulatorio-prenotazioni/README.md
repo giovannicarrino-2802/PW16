@@ -1,10 +1,10 @@
-# Poliambulatorio - Sistema gestionale prenotazioni (PW16 v1.0)
+# Poliambulatorio - Sistema gestionale prenotazioni
 
 Applicazione full-stack API-based per la gestione di un poliambulatorio:
 prenotazione di visite specialistiche **e** area amministrativa completa per la
 gestione di medici, prestazioni, disponibilita e associazioni medico-prestazione.
 
-Evoluzione del Project Work PW16 - CdS Informatica per le Aziende Digitali (L-31).
+Project Work PW16 - CdS Informatica per le Aziende Digitali (L-31).
 
 ## Architettura (a livelli)
 
@@ -19,16 +19,16 @@ Il livello **Servizi** applica le regole di business (es. una prestazione puo'
 essere prenotata solo se associata al medico); il livello **Repository** isola
 l'accesso ai dati; le **API** traducono le eccezioni di dominio in codici HTTP.
 
-## Novita della v2 (modifiche architetturali)
+## Architettura e funzionalita principali
 
-1. **Nuova entita `MedicoPrestazione`**: tabella di associazione molti-a-molti
+1. **Entita `MedicoPrestazione`**: tabella di associazione molti-a-molti
    tra `Medico` e `Prestazione` (`id`, `medico_id`, `prestazione_id`, con vincolo
-   di unicita). Aggiunte le relazioni ORM `Medico.prestazioni` /
-   `Prestazione.medici` e `Medico.disponibilita`.
-2. **Nuovi repository**: `MedicoRepository`, `PrestazioneRepository`,
-   `DisponibilitaRepository` (oltre a quello degli appuntamenti, esteso con
-   `prestazione()` e `medico_esegue()`).
-3. **Nuovi servizi**: `MedicoService`, `PrestazioneService`,
+   di unicita). Relazioni ORM `Medico.prestazioni` / `Prestazione.medici` e
+   `Medico.disponibilita`.
+2. **Repository**: `MedicoRepository`, `PrestazioneRepository`,
+   `DisponibilitaRepository`, oltre a quello degli appuntamenti, esteso con
+   `prestazione()` e `medico_esegue()`.
+3. **Servizi**: `MedicoService`, `PrestazioneService`,
    `DisponibilitaService`, ognuno con audit log integrato. Eccezioni di dominio
    centralizzate in `services/exceptions.py`
    (`NotFound/Forbidden/Conflict/ValidationError`).
@@ -37,12 +37,12 @@ l'accesso ai dati; le **API** traducono le eccezioni di dominio in codici HTTP.
    `exception_handler` in `main.py`.
 5. **Validazione della prenotazione**: la coppia medico-prestazione viene sempre
    verificata; le richieste non valide restituiscono `400`.
-6. **Nuovo endpoint pubblico** `GET /medici/{id}/prestazioni` e endpoint
+6. **Endpoint pubblico** `GET /medici/{id}/prestazioni` e endpoint
    `GET /auth/me` (per il ruolo lato front-end).
-7. **Front-end** ridisegnato: tendina prestazioni popolata in base al medico,
+7. **Front-end**: tendina prestazioni popolata in base al medico,
    selezione slot tramite **calendario settimanale scorrevole**, e **area
    amministrativa** visibile solo agli utenti `admin`.
-8. **Seed** ampliato: 5 medici, 10 prestazioni, associazioni e disponibilita
+8. **Seed**: 5 medici, 10 prestazioni, associazioni e disponibilita
    realistiche, utente amministratore.
 
 ## Avvio del back-end
@@ -174,6 +174,6 @@ MedicoPrestazione, Disponibilita, Appuntamento, AuditLog).
 - `backend/app/models`       -> entita ORM (SQLAlchemy)
 - `backend/app/schemas`      -> DTO (Pydantic)
 - `backend/app/core`         -> configurazione e sicurezza (JWT, hashing)
-- `backend/app/db`           -> base, sessione, seed, migrate
+- `backend/app/db`           -> base, sessione, seed
 - `frontend/`                -> interfaccia utente (booking + admin)
 - `docs/`                    -> diagrammi ER e note di progetto
