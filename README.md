@@ -37,8 +37,8 @@ l'accesso ai dati; le **API** traducono le eccezioni di dominio in codici HTTP.
    `exception_handler` in `main.py`.
 5. **Validazione della prenotazione**: la coppia medico-prestazione viene sempre
    verificata; le richieste non valide restituiscono `400`.
-6. **Endpoint pubblico** `GET /medici/{id}/prestazioni` e endpoint
-   `GET /auth/me` (per il ruolo lato front-end).
+6. **Endpoint** `GET /medici/{id}/prestazioni` e `GET /auth/me` (per il ruolo
+   lato front-end), entrambi riservati agli utenti autenticati.
 7. **Front-end**: tendina prestazioni popolata in base al medico,
    selezione slot tramite **calendario settimanale scorrevole**, e **area
    amministrativa** visibile solo agli utenti `admin`.
