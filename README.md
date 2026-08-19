@@ -151,7 +151,7 @@ Apri `frontend/index.html` nel browser (con il back-end avviato).
 
 Tutte le operazioni di scrittura amministrative e di segreteria sono tracciate
 nell'`AuditLog`. L'elenco completo delle azioni registrate e' in
-[`docs/NOTE.md`](docs/NOTE.md).
+[`poliambulatorio-prenotazioni/docs/NOTE.md`](poliambulatorio-prenotazioni/docs/NOTE.md).
 
 ## Test
 
@@ -166,10 +166,10 @@ blocco delle prenotazioni non valide, autorizzazioni RBAC, endpoint pubblico e
 audit log.
 
 ## Documentazione di progetto
-La cartella [`docs/`](docs/) raccoglie i diagrammi in formato Mermaid, che
+La cartella [`poliambulatorio-prenotazioni/docs/`](poliambulatorio-prenotazioni/docs/) raccoglie i diagrammi in formato Mermaid, che
 GitHub renderizza direttamente: casi d'uso, architettura a livelli, modello
 dati (ER), classi del flusso di prenotazione, diagramma di sequenza e ciclo di
-vita di un appuntamento. Il punto di ingresso e' [`docs/NOTE.md`](docs/NOTE.md),
+vita di un appuntamento. Il punto di ingresso e' [`poliambulatorio-prenotazioni/docs/NOTE.md`](poliambulatorio-prenotazioni/docs/NOTE.md),
 che contiene anche la mappa requisiti-endpoint-test e la matrice dei permessi.
 
 ## Struttura
@@ -181,4 +181,4 @@ che contiene anche la mappa requisiti-endpoint-test e la matrice dei permessi.
 - `backend/app/core`         -> configurazione e sicurezza (JWT, hashing)
 - `backend/app/db`           -> base, sessione, seed
 - `frontend/`                -> interfaccia utente (booking + admin)
-- `docs/`                    -> diagrammi ER e note di progetto
+- `poliambulatorio-prenotazioni/docs/`                    -> diagrammi ER e note di progetto
