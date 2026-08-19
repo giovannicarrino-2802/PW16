@@ -57,7 +57,6 @@ PW16/
 ├── README.md                        <- questo file
 └── poliambulatorio-prenotazioni/    <- progetto
     ├── requirements.txt
-    ├── Architettura_logica.drawio
     ├── backend/
     │   ├── app/
     │   │   ├── api/                 <- livello API (router REST, incl. admin/)
