@@ -7,7 +7,13 @@ from app.services.exceptions import (  # noqa: F401  (ri-esportate per compatibi
 
 
 class AppuntamentoService:
-    """Livello di business: applica le regole di prenotazione."""
+    """Livello di business: applica le regole di prenotazione.
+
+    Ciclo di vita di una prenotazione: `prenotata` e' l'unico stato attivo;
+    `annullata` e `completata` sono stati terminali e non ammettono ulteriori
+    transizioni. Solo una prenotazione attiva "possiede" il proprio slot: per
+    questo le operazioni che liberano lo slot sono ammesse esclusivamente a
+    partire dallo stato `prenotata`."""
 
     def __init__(self, repo, audit):
         self.repo = repo
@@ -71,6 +77,8 @@ class AppuntamentoService:
             raise ForbiddenError("Non puoi modificare prenotazioni altrui")
         if app.stato == "completata":
             raise ConflictError("Una visita completata non e annullabile")
+        if app.stato == "annullata":
+            raise ConflictError("La prenotazione e gia annullata")
         app = self.repo.annulla(app)
         self.audit.log(utente_id, "CANCEL_APPUNTAMENTO", "appuntamento", app.id)
         return app
@@ -82,6 +90,8 @@ class AppuntamentoService:
             raise NotFoundError("Appuntamento inesistente")
         if app.stato == "completata":
             raise ConflictError("Una visita completata non e annullabile")
+        if app.stato == "annullata":
+            raise ConflictError("La prenotazione e gia annullata")
         app = self.repo.annulla(app)
         self.audit.log(utente_id, "CANCEL_APPUNTAMENTO", "appuntamento", app.id)
         return app
@@ -97,14 +107,24 @@ class AppuntamentoService:
         return app
 
     def riprogramma(self, utente_id, app_id, nuovo_slot_id):
+        """Sposta la prenotazione su un altro slot dello stesso medico."""
         app = self.repo.get(app_id)
         if app is None:
             raise NotFoundError("Appuntamento inesistente")
-        if app.stato == "completata":
-            raise ConflictError("Una visita completata non e riprogrammabile")
+        if app.stato != "prenotata":
+            # Uno slot e' "posseduto" solo da una prenotazione attiva: spostare
+            # una prenotazione terminata liberebbe uno slot che nel frattempo
+            # potrebbe appartenere a un'altra prenotazione.
+            raise ConflictError("Sono riprogrammabili solo le prenotazioni attive")
         nuovo = self.repo.slot(nuovo_slot_id)
         if nuovo is None:
             raise NotFoundError("Slot inesistente")
+        if nuovo.medico_id != app.medico_id:
+            # La riprogrammazione sposta solo l'orario: cambiare il medico
+            # equivarrebbe a una prenotazione diversa da quella scelta dal
+            # paziente, e va gestita annullando e riprenotando.
+            raise ConflictError(
+                "Il nuovo slot deve appartenere allo stesso medico della prenotazione")
         if nuovo.occupato and nuovo.id != app.disponibilita_id:
             raise ConflictError("Slot non piu disponibile")
         if not self.repo.medico_esegue(nuovo.medico_id, app.prestazione_id):
