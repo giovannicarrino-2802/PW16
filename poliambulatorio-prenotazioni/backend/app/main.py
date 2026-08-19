@@ -23,7 +23,9 @@ app = FastAPI(title="Poliambulatorio API", version="1.0.0",
                           "gestione medici/prestazioni/disponibilita e area "
                           "amministrativa (RBAC) - Project Work PW16")
 
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True,
+# Il front-end si autentica con header Authorization (token in localStorage) e
+# non usa cookie: le credenziali cross-origin non servono e vengono disabilitate.
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=False,
                    allow_methods=["*"], allow_headers=["*"])
 
 
