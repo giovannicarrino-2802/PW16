@@ -48,6 +48,19 @@ prenotazione attiva "possiede" il proprio slot: agire su una prenotazione gia
 terminata libererebbe uno slot che nel frattempo puo' appartenere a un'altra
 prenotazione. Copertura: `tests/test_stati_prenotazione.py`.
 
+## Limiti noti
+Scelte consapevoli o vincoli non risolti nella soluzione, elencati per
+trasparenza. Non impediscono l'uso previsto del prototipo.
+
+- **Integrita referenziale non applicata dal database.** SQLite non verifica le
+  foreign key se non viene attivato `PRAGMA foreign_keys=ON`, qui non impostato.
+  L'eliminazione di un medico o di una prestazione dall'area amministrativa non
+  controlla le dipendenze: restano righe orfane in `medico_prestazione`,
+  `disponibilita` e `appuntamento`. Poiche' l'agenda (`list_tutti_dettaglio`)
+  usa una join su medico e prestazione, le prenotazioni orfane non compaiono
+  piu' nell'elenco anziche' generare un errore. Mitigazione operativa: eliminare
+  medici e prestazioni solo se non hanno prenotazioni collegate.
+
 ## Note di implementazione
 - Le eccezioni di dominio (`services/exceptions.py`) sono mappate a codici HTTP
   centralmente in `main.py` (`404/403/409/400`).
