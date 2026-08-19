@@ -27,6 +27,7 @@ avvia il back-end e apri http://localhost:8000/docs (oppure /openapi.json).
 - RF3 prestazioni per medico -> `/medici/{id}/prestazioni` -> `test_prestazioni_del_medico`
 - RF4 prenotazione (validata) -> `POST /appuntamenti` -> `test_prenota_e_lista`, `test_slot_occupato_genera_conflitto`, `test_prenotazione_non_valida_bloccata`
 - RF5 le mie prenotazioni / annulla -> `GET /appuntamenti`, `PATCH /appuntamenti/{id}`
+- RF5b titolarita della prenotazione -> `PATCH /appuntamenti/{id}` -> `test_paziente_non_annulla_prenotazione_altrui`
 - RF6 agenda operatore -> `GET /appuntamenti/tutti`, `GET /appuntamenti/admin/tutti`
 - RF7 gestione medici (admin) -> `/admin/medici` -> `test_crud_medico`, `test_rbac_*`
 - RF8 gestione prestazioni (admin) -> `/admin/prestazioni` -> `test_crud_prestazione`, `test_prestazione_validazione`
@@ -35,7 +36,8 @@ avvia il back-end e apri http://localhost:8000/docs (oppure /openapi.json).
 - RF11 audit -> `AuditService` -> `test_audit_registra_operazioni_admin`
 - RF12 segreteria: prenota per conto / agenda / modifica -> `/appuntamenti/operatore`, `/appuntamenti/tutti`, `PATCH /appuntamenti/tutti/{id}` -> `test_segreteria_prenota_per_paziente_e_modifica`
 - RF13 gestione utenti (admin) -> `/admin/utenti` -> `test_crud_utente_operatore`, `test_crea_utente_paziente_con_profilo`, `test_utenti_rbac_e_self_delete`
-- RF14 stati terminali della prenotazione -> `PATCH /appuntamenti/{id}`, `PATCH /appuntamenti/tutti/{id}` -> `test_paziente_non_annulla_due_volte`, `test_segreteria_non_annulla_due_volte`, `test_riprogramma_solo_prenotazioni_attive`, `test_riprogramma_prenotazione_completata`, `test_riprogramma_solo_stesso_medico`
+- RF14 stati terminali della prenotazione -> `PATCH /appuntamenti/{id}`, `PATCH /appuntamenti/tutti/{id}` -> `test_paziente_non_annulla_due_volte`, `test_segreteria_non_annulla_due_volte`, `test_riprogramma_solo_prenotazioni_attive`, `test_riprogramma_prenotazione_completata`, `test_riprogramma_solo_stesso_medico`, `test_riprogramma_su_slot_occupato`
+- RF15 integrita degli slot -> `DELETE /admin/disponibilita/{id}` -> `test_elimina_slot_prenotato_bloccata`
 
 ## Ruoli (RBAC)
 
