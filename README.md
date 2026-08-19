@@ -164,9 +164,12 @@ I test (cartella `backend/tests/`) usano un database SQLite isolato
 blocco delle prenotazioni non valide, autorizzazioni RBAC, endpoint pubblico e
 audit log.
 
-## Diagramma ER
-Vedi [`docs/ER.md`](docs/ER.md) (entita: Utente, Paziente, Medico, Prestazione,
-MedicoPrestazione, Disponibilita, Appuntamento, AuditLog).
+## Documentazione di progetto
+La cartella [`docs/`](docs/) raccoglie i diagrammi in formato Mermaid, che
+GitHub renderizza direttamente: casi d'uso, architettura a livelli, modello
+dati (ER), classi del flusso di prenotazione, diagramma di sequenza e ciclo di
+vita di un appuntamento. Il punto di ingresso e' [`docs/NOTE.md`](docs/NOTE.md),
+che contiene anche la mappa requisiti-endpoint-test e la matrice dei permessi.
 
 ## Struttura
 - `backend/app/api`          -> livello API (router REST, incl. `admin/`)
