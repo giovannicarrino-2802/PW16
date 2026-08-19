@@ -147,9 +147,9 @@ Apri `frontend/index.html` nel browser (con il back-end avviato).
 | GET/POST | `/api/v1/admin/utenti` | **Gestione utenti**: elenco / creazione (email, password, ruolo) |
 | PUT/DELETE | `/api/v1/admin/utenti/{id}` | Modifica (incl. password) / eliminazione |
 
-Tutte le operazioni di scrittura amministrative sono tracciate nell'`AuditLog`
-(azioni `CREATE_/UPDATE_/DELETE_MEDICO`, `..._PRESTAZIONE`,
-`CREATE_DISPONIBILITA`, `LINK_/UNLINK_MEDICO_PRESTAZIONE`).
+Tutte le operazioni di scrittura amministrative e di segreteria sono tracciate
+nell'`AuditLog`. L'elenco completo delle azioni registrate e' in
+[`docs/NOTE.md`](docs/NOTE.md).
 
 ## Test
 
