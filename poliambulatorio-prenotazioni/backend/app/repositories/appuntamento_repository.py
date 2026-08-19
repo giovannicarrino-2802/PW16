@@ -16,7 +16,10 @@ class AppuntamentoRepository:
         return self.db.query(Disponibilita).filter(Disponibilita.id == disponibilita_id).first()
 
     def slot_liberi(self, medico_id):
-        now = datetime.utcnow()
+        # Gli orari degli slot sono datetime "naive" espressi nell'ora locale
+        # dell'ambulatorio (sia quelli del seed sia quelli generati dall'area
+        # amministrativa): il confronto usa quindi datetime.now() e non utcnow().
+        now = datetime.now()
         return (self.db.query(Disponibilita)
                 .filter(Disponibilita.medico_id == medico_id,
                         Disponibilita.occupato.is_(False),
