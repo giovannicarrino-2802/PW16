@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.base import Base
 from app.db.session import engine
-# Import dei modelli per la registrazione nel metadata (incluse le nuove entita)
+# Import dei modelli per la registrazione nel metadata di SQLAlchemy
 from app.models import (utente, paziente, medico, prestazione, medico_prestazione,
                         disponibilita, appuntamento, audit_log)  # noqa: F401
 from app.db import seed
@@ -18,7 +18,7 @@ from app.services.exceptions import (NotFoundError, ForbiddenError,
 Base.metadata.create_all(bind=engine)
 seed.run()
 
-app = FastAPI(title="Poliambulatorio API", version="2.0.0",
+app = FastAPI(title="Poliambulatorio API", version="1.0.0",
               description="Sistema gestionale per poliambulatorio: prenotazioni, "
                           "gestione medici/prestazioni/disponibilita e area "
                           "amministrativa (RBAC) - Project Work PW16")

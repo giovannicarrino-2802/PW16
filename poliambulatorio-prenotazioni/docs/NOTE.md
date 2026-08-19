@@ -1,9 +1,9 @@
 # Documentazione di progetto
 
-Questa cartella raccoglie gli artefatti di design del PW16 (v2.0).
+Questa cartella raccoglie gli artefatti di design del PW16.
 
 ## Diagrammi
-- `ER.md`             -> diagramma entita-relazione (Mermaid) del modello dati v2
+- `ER.md`             -> diagramma entita-relazione (Mermaid) del modello dati
 - `uml/use-case.png`  -> attori (Paziente, Operatore, Admin) e casi d'uso *(da produrre)*
 - `uml/class.png`     -> modello di dominio *(da produrre)*
 - `uml/sequence-prenota.png` -> flusso "Prenota visita" *(da produrre)*
@@ -18,7 +18,7 @@ avvia il back-end e apri http://localhost:8000/docs (oppure /openapi.json).
 - RF3 prestazioni per medico -> `/medici/{id}/prestazioni` -> `test_prestazioni_del_medico_pubblico`
 - RF4 prenotazione (validata) -> `POST /appuntamenti` -> `test_prenota_e_lista`, `test_slot_occupato_genera_conflitto`, `test_prenotazione_non_valida_bloccata`
 - RF5 le mie prenotazioni / annulla -> `GET /appuntamenti`, `PATCH /appuntamenti/{id}`
-- RF6 agenda operatore -> `GET /appuntamenti/admin/tutti`
+- RF6 agenda operatore -> `GET /appuntamenti/tutti`, `GET /appuntamenti/admin/tutti`
 - RF7 gestione medici (admin) -> `/admin/medici` -> `test_crud_medico`, `test_rbac_*`
 - RF8 gestione prestazioni (admin) -> `/admin/prestazioni` -> `test_crud_prestazione`, `test_prestazione_validazione`
 - RF9 gestione disponibilita (admin) -> `/admin/disponibilita` -> `test_crud_disponibilita`, `test_disponibilita_intervallo_non_valido`
@@ -45,3 +45,5 @@ CREATE/CANCEL/COMPLETE/RESCHEDULE_APPUNTAMENTO, CREATE/UPDATE/DELETE_UTENTE.
 - RBAC: `require_role(...)` / `require_admin` in `app/api/deps.py`.
 - La relazione molti-a-molti e' modellata da `MedicoPrestazione`; la
   prenotazione verifica sempre `AppuntamentoRepository.medico_esegue(...)`.
+- Lo schema del database viene creato all'avvio da `Base.metadata.create_all()`
+  e popolato dal seed (`app/db/seed.py`).

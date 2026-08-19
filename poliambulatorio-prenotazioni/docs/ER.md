@@ -1,8 +1,8 @@
 # Modello dati - Diagramma ER
 
-Sistema gestionale Poliambulatorio (v2.0). Le entita nuove/aggiornate rispetto
-alla v1 sono **Medico**, **Prestazione**, **MedicoPrestazione** (nuova tabella di
-associazione molti-a-molti) e **Disponibilita**.
+Sistema gestionale Poliambulatorio. Le entita del dominio sono **Utente**,
+**Paziente**, **Medico**, **Prestazione**, **MedicoPrestazione** (tabella di
+associazione molti-a-molti), **Disponibilita**, **Appuntamento** e **AuditLog**.
 
 ```mermaid
 erDiagram
@@ -98,3 +98,9 @@ CREATE TABLE medico_prestazione (
     CONSTRAINT uq_medico_prestazione UNIQUE (medico_id, prestazione_id)
 );
 ```
+
+## Creazione dello schema
+
+Lo schema viene creato automaticamente all'avvio dell'applicazione tramite
+`Base.metadata.create_all()` (in `app/main.py`) e popolato con i dati di esempio
+dal modulo `app/db/seed.py`.

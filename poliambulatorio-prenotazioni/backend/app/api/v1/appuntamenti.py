@@ -86,8 +86,9 @@ def modifica_qualsiasi(app_id: int, data: AppuntamentoAdminUpdate, db: Session =
                                "stato 'annullata'/'completata'")
 
 
-# Alias storico mantenuto per compatibilita
 @router.get("/admin/tutti", response_model=List[AppuntamentoOut])
-def agenda_completa_legacy(db: Session = Depends(get_db),
-                           _: Utente = Depends(require_role("operatore", "admin"))):
+def agenda_sintetica(db: Session = Depends(get_db),
+                     _: Utente = Depends(require_role("operatore", "admin"))):
+    """Vista sintetica dell'agenda: elenco delle prenotazioni in ordine
+    cronologico, senza i dati anagrafici collegati."""
     return db.query(Appuntamento).order_by(Appuntamento.inizio).all()
