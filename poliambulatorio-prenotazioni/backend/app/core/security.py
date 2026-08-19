@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import bcrypt
 from jose import jwt
 from app.core.config import settings
@@ -24,6 +24,8 @@ def verify_password(plain, hashed):
         return False
 
 def create_access_token(subject, ruolo):
-    expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    # Il claim "exp" del JWT e' per specifica un timestamp UTC: e' l'unico
+    # istante del sistema che non segue l'ora locale dell'ambulatorio.
+    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {"sub": str(subject), "ruolo": ruolo, "exp": expire}
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
