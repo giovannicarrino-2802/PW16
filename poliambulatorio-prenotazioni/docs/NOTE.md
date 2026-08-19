@@ -131,6 +131,14 @@ trasparenza. Non impediscono l'uso previsto del prototipo.
   database, cosi' un record di audit e' direttamente confrontabile con l'orario
   di una prenotazione. Unica eccezione il claim `exp` del token JWT, che per
   specifica e' un timestamp UTC e non viene mai confrontato con i dati.
+- I test condividono un **unico database di sessione**: `conftest.py` cancella
+  e ricrea `test_poliambulatorio.db` una sola volta all'avvio della suite, poi
+  il seed lo ripopola. Non c'e' isolamento fra file: ogni prenotazione consuma
+  uno slot, che i test successivi non trovano piu' fra quelli liberi. I test che
+  hanno bisogno di risorse specifiche (medico, prestazione, slot) se le creano
+  quindi tramite gli endpoint amministrativi anziche' pescare dal seed. Da
+  eseguire con `pytest` sull'intera cartella: lanciare un singolo file parte da
+  uno stato diverso, e l'esecuzione in parallelo non e' supportata.
 - Le eccezioni di dominio (`services/exceptions.py`) sono mappate a codici HTTP
   centralmente in `main.py` (`404/403/409/400`).
 - Convenzione sui codici di errore: `422` segnala un payload che non supera la
