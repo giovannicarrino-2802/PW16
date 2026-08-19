@@ -43,7 +43,8 @@ l'accesso ai dati; le **API** traducono le eccezioni di dominio in codici HTTP.
    selezione slot tramite **calendario settimanale scorrevole**, e **area
    amministrativa** visibile solo agli utenti `admin`.
 8. **Seed**: 5 medici, 10 prestazioni, associazioni e disponibilita
-   realistiche, utente amministratore.
+   realistiche, e i tre utenti demo (paziente, operatore di segreteria,
+   amministratore).
 
 ## Avvio del back-end
 
