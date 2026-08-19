@@ -28,19 +28,23 @@ def _paziente():
     return _h("mario.rossi@example.com", "Password123!")
 
 
-def _slot_e_prestazione(medico_headers):
-    """Ritorna (medico_id, prestazione_id, slot_id) validi e associati."""
+def _slot_e_prestazione(medico_headers, min_slot=1):
+    """Ritorna (medico_id, prestazione_id, [slot_id, ...]) validi e associati.
+
+    `min_slot` indica quanti slot liberi servono al test: cerca un medico che
+    ne abbia almeno quel numero."""
     medici = client.get("/api/v1/medici", headers=medico_headers).json()
     for m in medici:
         prest = client.get(f"/api/v1/medici/{m['id']}/prestazioni", headers=medico_headers).json()
         slots = client.get(f"/api/v1/medici/{m['id']}/disponibilita", headers=medico_headers).json()
-        if prest and slots:
-            return m["id"], prest[0]["id"], slots[0]["id"]
-    raise AssertionError("Nessun medico con prestazioni e slot disponibili")
+        if prest and len(slots) >= min_slot:
+            return m["id"], prest[0]["id"], [s["id"] for s in slots[:min_slot]]
+    raise AssertionError(
+        f"Nessun medico con prestazioni associate e almeno {min_slot} slot liberi")
 
 
 # --------------------------------------------------------------------------
-# RBAC di base sui nuovi endpoint
+# RBAC di base sugli endpoint di segreteria
 # --------------------------------------------------------------------------
 def test_agenda_richiede_staff():
     assert client.get("/api/v1/appuntamenti/tutti", headers=_paziente()).status_code == 403
@@ -62,11 +66,15 @@ def test_segreteria_prenota_per_paziente_e_modifica():
     op = _operatore()
     pazienti = client.get("/api/v1/pazienti", headers=op).json()
     paziente_id = pazienti[0]["id"]
-    mid, pid, sid = _slot_e_prestazione(op)
+    # Servono due slot dello stesso medico: uno da prenotare, uno di destinazione
+    # per la riprogrammazione.
+    mid, pid, slot_ids = _slot_e_prestazione(op, min_slot=2)
+    sid, nuovo_sid = slot_ids[0], slot_ids[1]
 
     # Prenotazione per conto del paziente
     r = client.post("/api/v1/appuntamenti/operatore", headers=op,
-                    json={"paziente_id": paziente_id, "disponibilita_id": sid, "prestazione_id": pid})
+                    json={"paziente_id": paziente_id, "disponibilita_id": sid,
+                          "prestazione_id": pid})
     assert r.status_code == 201, r.text
     app_id = r.json()["id"]
 
@@ -75,32 +83,39 @@ def test_segreteria_prenota_per_paziente_e_modifica():
     riga = next(a for a in agenda if a["id"] == app_id)
     assert riga["paziente_nome"] and riga["medico_nome"] and riga["prestazione_nome"]
 
-    # Riprogramma su un altro slot libero dello stesso medico
-    slots = client.get(f"/api/v1/medici/{mid}/disponibilita", headers=op).json()
-    nuovo = next((s for s in slots if s["id"] != sid), None)
-    if nuovo:
-        r = client.patch(f"/api/v1/appuntamenti/tutti/{app_id}", headers=op,
-                         json={"disponibilita_id": nuovo["id"]})
-        assert r.status_code == 200, r.text
+    # Riprogrammazione su un altro slot libero dello stesso medico
+    r = client.patch(f"/api/v1/appuntamenti/tutti/{app_id}", headers=op,
+                     json={"disponibilita_id": nuovo_sid})
+    assert r.status_code == 200, r.text
+    assert r.json()["id"] == app_id
+
+    # Lo slot di partenza torna disponibile, quello nuovo risulta occupato
+    liberi = [s["id"] for s in
+              client.get(f"/api/v1/medici/{mid}/disponibilita", headers=op).json()]
+    assert sid in liberi
+    assert nuovo_sid not in liberi
 
     # Completa
-    r = client.patch(f"/api/v1/appuntamenti/tutti/{app_id}", headers=op, json={"stato": "completata"})
+    r = client.patch(f"/api/v1/appuntamenti/tutti/{app_id}", headers=op,
+                     json={"stato": "completata"})
     assert r.status_code == 200 and r.json()["stato"] == "completata"
 
 
 def test_segreteria_prenota_paziente_inesistente():
     op = _operatore()
-    _, pid, sid = _slot_e_prestazione(op)
+    _, pid, slot_ids = _slot_e_prestazione(op)
     r = client.post("/api/v1/appuntamenti/operatore", headers=op,
-                    json={"paziente_id": 999999, "disponibilita_id": sid, "prestazione_id": pid})
+                    json={"paziente_id": 999999, "disponibilita_id": slot_ids[0],
+                          "prestazione_id": pid})
     assert r.status_code == 404
 
 
 def test_paziente_non_usa_endpoint_operatore():
     hp = _paziente()
-    _, pid, sid = _slot_e_prestazione(hp)
+    _, pid, slot_ids = _slot_e_prestazione(hp)
     r = client.post("/api/v1/appuntamenti/operatore", headers=hp,
-                    json={"paziente_id": 1, "disponibilita_id": sid, "prestazione_id": pid})
+                    json={"paziente_id": 1, "disponibilita_id": slot_ids[0],
+                          "prestazione_id": pid})
     assert r.status_code == 403
 
 
