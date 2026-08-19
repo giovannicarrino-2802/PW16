@@ -6,6 +6,10 @@ gestione di medici, prestazioni, disponibilita e associazioni medico-prestazione
 
 Project Work PW16 - CdS Informatica per le Aziende Digitali (L-31).
 
+Il codice sorgente si trova nella cartella
+[`poliambulatorio-prenotazioni/`](poliambulatorio-prenotazioni/); questo file
+descrive il progetto nel suo insieme.
+
 ## Architettura (a livelli)
 
 ```
@@ -46,16 +50,39 @@ l'accesso ai dati; le **API** traducono le eccezioni di dominio in codici HTTP.
    realistiche, e i tre utenti demo (paziente, operatore di segreteria,
    amministratore).
 
+## Struttura del repository
+
+```
+PW16/
+├── README.md                        <- questo file
+└── poliambulatorio-prenotazioni/    <- progetto
+    ├── requirements.txt
+    ├── Architettura_logica.drawio
+    ├── backend/
+    │   ├── app/
+    │   │   ├── api/                 <- livello API (router REST, incl. admin/)
+    │   │   ├── services/            <- regole di business (+ exceptions.py)
+    │   │   ├── repositories/        <- accesso ai dati
+    │   │   ├── models/              <- entita ORM (SQLAlchemy)
+    │   │   ├── schemas/             <- DTO (Pydantic)
+    │   │   ├── core/                <- configurazione e sicurezza (JWT, hashing)
+    │   │   └── db/                  <- base, sessione, seed
+    │   └── tests/                   <- suite pytest
+    ├── frontend/                    <- interfaccia utente (booking + admin)
+    └── docs/                        <- diagrammi e note di progetto
+```
+
 ## Avvio del back-end
 
-> Nota: `requirements.txt` si trova nella **root del progetto**, non in
-> `backend/`. Avviando dal folder `backend/`, installa le dipendenze con
-> `..\requirements.txt` (Windows) oppure `../requirements.txt` (macOS/Linux).
+> Nota: `requirements.txt` si trova nella radice del progetto
+> (`poliambulatorio-prenotazioni/`), non in `backend/`. Avviando dal folder
+> `backend/`, installa le dipendenze con `..\requirements.txt` (Windows)
+> oppure `../requirements.txt` (macOS/Linux).
 
 ### Windows (PowerShell)
 
 ```powershell
-cd backend
+cd poliambulatorio-prenotazioni\backend
 python -m venv .venv
 .venv\Scripts\activate
 # Se l'attivazione e' bloccata dalla policy, esegui prima:
@@ -68,7 +95,7 @@ uvicorn app.main:app --reload
 ### macOS / Linux
 
 ```bash
-cd backend
+cd poliambulatorio-prenotazioni/backend
 python -m venv .venv
 source .venv/bin/activate
 pip install -r ../requirements.txt
@@ -84,7 +111,8 @@ uvicorn app.main:app --reload
 - **Admin:   admin@example.com        /  Admin123!**
 
 ## Front-end
-Apri `frontend/index.html` nel browser (con il back-end avviato).
+Apri `poliambulatorio-prenotazioni/frontend/index.html` nel browser (con il
+back-end avviato).
 
 - **Prenota una visita**: scegli il medico -> la tendina delle prestazioni si
   popola con le sole prestazioni erogate da quel medico -> seleziona uno slot
@@ -98,7 +126,6 @@ Apri `frontend/index.html` nel browser (con il back-end avviato).
   settimana, fascia oraria e durata, (3) rivedi gli slot su un calendario
   settimanale ed eliminane singolarmente quelli non voluti (gli slot gia prenotati
   non sono eliminabili).
-
 - **Agenda** (segreteria `operatore` e `admin`): vista di **tutte** le
   prenotazioni con nome paziente/medico/prestazione, filtro per stato e azioni
   **Riprogramma / Completa / Annulla** su qualsiasi appuntamento. La
@@ -151,12 +178,12 @@ Apri `frontend/index.html` nel browser (con il back-end avviato).
 
 Tutte le operazioni di scrittura amministrative e di segreteria sono tracciate
 nell'`AuditLog`. L'elenco completo delle azioni registrate e' in
-[`docs/NOTE.md`](docs/NOTE.md).
+[`docs/NOTE.md`](poliambulatorio-prenotazioni/docs/NOTE.md).
 
 ## Test
 
 ```
-cd backend
+cd poliambulatorio-prenotazioni/backend
 pytest
 ```
 
@@ -167,19 +194,16 @@ titolarita delle prenotazioni, stati terminali e vincoli sugli slot, gestione
 utenti e audit log. Vanno eseguiti sull'intera cartella.
 
 ## Documentazione di progetto
-La cartella [`docs/`](docs/) raccoglie i diagrammi in formato Mermaid, che
-GitHub renderizza direttamente: casi d'uso, architettura a livelli, modello
-dati (ER), classi del flusso di prenotazione, diagramma di sequenza e ciclo di
-vita di un appuntamento. Il punto di ingresso e' [`docs/NOTE.md`](docs/NOTE.md),
-che contiene anche la mappa requisiti-endpoint-test e la matrice dei permessi.
 
-## Struttura
-- `backend/app/api`          -> livello API (router REST, incl. `admin/`)
-- `backend/app/services`     -> regole di business (+ `exceptions.py`)
-- `backend/app/repositories` -> accesso ai dati
-- `backend/app/models`       -> entita ORM (SQLAlchemy)
-- `backend/app/schemas`      -> DTO (Pydantic)
-- `backend/app/core`         -> configurazione e sicurezza (JWT, hashing)
-- `backend/app/db`           -> base, sessione, seed
-- `frontend/`                -> interfaccia utente (booking + admin)
-- `docs/`                    -> diagrammi ER e note di progetto
+La cartella [`docs/`](poliambulatorio-prenotazioni/docs/) raccoglie i diagrammi
+in formato Mermaid, che GitHub renderizza direttamente.
+
+| Documento | Contenuto |
+|---|---|
+| [`NOTE.md`](poliambulatorio-prenotazioni/docs/NOTE.md) | Punto di ingresso: mappa requisiti-endpoint-test, matrice dei permessi, convenzioni, limiti noti |
+| [`casi-uso.md`](poliambulatorio-prenotazioni/docs/casi-uso.md) | Attori e casi d'uso |
+| [`architettura.md`](poliambulatorio-prenotazioni/docs/architettura.md) | Architettura a livelli e responsabilita |
+| [`ER.md`](poliambulatorio-prenotazioni/docs/ER.md) | Modello dati: entita, relazioni e vincoli |
+| [`classi-prenotazione.md`](poliambulatorio-prenotazioni/docs/classi-prenotazione.md) | Classi della fetta verticale "Prenota visita" |
+| [`sequenza-prenotazione.md`](poliambulatorio-prenotazioni/docs/sequenza-prenotazione.md) | Flusso completo della prenotazione |
+| [`stati-prenotazione.md`](poliambulatorio-prenotazioni/docs/stati-prenotazione.md) | Ciclo di vita di un appuntamento |
