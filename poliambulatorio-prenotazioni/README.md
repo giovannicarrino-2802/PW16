@@ -1,4 +1,4 @@
-# Poliambulatorio - Sistema gestionale prenotazioni (PW16 v2.0)
+# Poliambulatorio - Sistema gestionale prenotazioni (PW16 v1.0)
 
 Applicazione full-stack API-based per la gestione di un poliambulatorio:
 prenotazione di visite specialistiche **e** area amministrativa completa per la
