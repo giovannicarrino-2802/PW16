@@ -61,6 +61,12 @@ trasparenza. Non impediscono l'uso previsto del prototipo.
   piu' nell'elenco anziche' generare un errore. Mitigazione operativa: eliminare
   medici e prestazioni solo se non hanno prenotazioni collegate.
 - **Audit log conservato oltre la vita dell'utente.** L'eliminazione di un utente rimuove il profilo paziente e le sue prenotazioni, ma non i record di `audit_log`, che restano con un `utente_id` non piu' risolvibile. E' una scelta intenzionale: cancellare la tracciabilita delle azioni passate insieme all'utente vanificherebbe lo scopo del log. Chi consulta l'audit deve quindi gestire il caso di utente non piu' esistente.
+- **Chiave di firma dei token con valore predefinito.** `SECRET_KEY` viene letta
+  dalla variabile d'ambiente omonima, ma in sua assenza `core/config.py` ricade
+  su un valore fisso di sviluppo (`"dev-secret-cambia-in-produzione"`). Questo
+  consente di avviare la demo e la suite di test senza configurazione, ma in un
+  ambiente reale la variabile va impostata: chi conoscesse il default potrebbe
+  altrimenti forgiare token JWT validi per qualsiasi utente e ruolo.
 
 ## Note di implementazione
 - Le eccezioni di dominio (`services/exceptions.py`) sono mappate a codici HTTP
