@@ -24,7 +24,7 @@ def disponibilita(medico_id: int, db: Session = Depends(get_db), _=Depends(get_c
 @router.get("/{medico_id}/prestazioni", response_model=List[PrestazioneRef])
 def prestazioni_del_medico(medico_id: int, db: Session = Depends(get_db),
                            _=Depends(get_current_user)):
-    """Elenco pubblico delle prestazioni erogabili dal medico selezionato.
+    """Prestazioni erogabili dal medico selezionato (richiede autenticazione).
 
     Usato dal front-end per popolare la tendina delle prestazioni in base al
     medico scelto (relazione medico-prestazione)."""
