@@ -60,7 +60,7 @@ trasparenza. Non impediscono l'uso previsto del prototipo.
   usa una join su medico e prestazione, le prenotazioni orfane non compaiono
   piu' nell'elenco anziche' generare un errore. Mitigazione operativa: eliminare
   medici e prestazioni solo se non hanno prenotazioni collegate.
-- **Audit log conservato oltre la vita dell'utente.** L'eliminazione di un utente rimuove il profilo paziente e le sue prenotazioni, ma non i record di `audit_log`, che restano con un `utente_id` non piu' risolvibile. E' una scelta intenzionale: cancellare la tracciabilita delle azioni passate insieme all'utente vanificherebbe lo scopo del log. Chi consulta l'audit deve quindi gestire il caso di utente non piu' esistente.
+
 - **Chiave di firma dei token con valore predefinito.** `SECRET_KEY` viene letta
   dalla variabile d'ambiente omonima, ma in sua assenza `core/config.py` ricade
   su un valore fisso di sviluppo (`"dev-secret-cambia-in-produzione"`). Questo
@@ -68,9 +68,22 @@ trasparenza. Non impediscono l'uso previsto del prototipo.
   ambiente reale la variabile va impostata: chi conoscesse il default potrebbe
   altrimenti forgiare token JWT validi per qualsiasi utente e ruolo.
 
+- **Audit log conservato oltre la vita dell'utente.** L'eliminazione di un utente
+  rimuove il profilo paziente e le sue prenotazioni, ma non i record di
+  `audit_log`, che restano con un `utente_id` non piu' risolvibile. E' una scelta
+  intenzionale: cancellare la tracciabilita delle azioni passate insieme
+  all'utente vanificherebbe lo scopo del log. Chi consulta l'audit deve quindi
+  gestire il caso di utente non piu' esistente.
+
 ## Note di implementazione
 - Le eccezioni di dominio (`services/exceptions.py`) sono mappate a codici HTTP
   centralmente in `main.py` (`404/403/409/400`).
+- Convenzione sui codici di errore: `422` segnala un payload che non supera la
+  validazione dello schema Pydantic (es. `fine <= inizio` su
+  `POST /admin/disponibilita`, intercettato da `DisponibilitaBase`), `400` una
+  regola di dominio violata nel service (es. `ora_fine <= ora_inizio` su
+  `POST /admin/disponibilita/genera`). Lo stesso errore semantico puo' quindi
+  arrivare con codici diversi a seconda del livello che lo rileva per primo.
 - RBAC: `require_role(...)` / `require_admin` in `app/api/deps.py`.
 - La relazione molti-a-molti e' modellata da `MedicoPrestazione`; la
   prenotazione verifica sempre `AppuntamentoRepository.medico_esegue(...)`.
