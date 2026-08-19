@@ -10,4 +10,5 @@ class AuditLog(Base):
     entita = Column(String, nullable=False)
     entita_id = Column(Integer)
     dettagli = Column(String)
-    ts = Column(DateTime, default=datetime.utcnow)
+    # Ora locale dell'ambulatorio, coerente con gli orari degli appuntamenti.
+    ts = Column(DateTime, default=datetime.now)
