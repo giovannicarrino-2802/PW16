@@ -151,7 +151,7 @@ Apri `frontend/index.html` nel browser (con il back-end avviato).
 
 Tutte le operazioni di scrittura amministrative e di segreteria sono tracciate
 nell'`AuditLog`. L'elenco completo delle azioni registrate e' in
-[`poliambulatorio-prenotazioni/docs/NOTE.md`](poliambulatorio-prenotazioni/docs/NOTE.md).
+[`poliambulatorio-prenotazioni/docs/NOTE.md`](docs/NOTE.md).
 
 ## Test
 
