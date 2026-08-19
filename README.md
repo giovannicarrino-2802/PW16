@@ -101,7 +101,8 @@ Apri `frontend/index.html` nel browser (con il back-end avviato).
 
 - **Agenda** (segreteria `operatore` e `admin`): vista di **tutte** le
   prenotazioni con nome paziente/medico/prestazione, filtro per stato e azioni
-  **Riprogramma / Completa / Annulla** su qualsiasi appuntamento.
+  **Riprogramma / Completa / Annulla** su qualsiasi appuntamento. La
+  riprogrammazione propone gli altri slot liberi dello stesso medico.
 - **Prenota per conto** (segreteria): nella scheda *Prenota*, la segreteria
   seleziona il paziente in cima e poi prenota normalmente scegliendo medico,
   prestazione e slot.
