@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Poliambulatorio - Prenotazioni</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="logo">+</span>
+      <h1>Poliambulatorio</h1>
+    </div>
+    <div id="user-box" class="user-box hidden">
+      <span id="user-info"></span>
+      <button id="logout" class="btn-ghost">Esci</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================ LOGIN ============================ -->
+    <section id="login-view" class="card login-card">
+      <h2>Accedi</h2>
+      <form id="login-form">
+        <label>Email
+          <input id="email" type="email" placeholder="Email" value="mario.rossi@example.com" required>
+        </label>
+        <label>Password
+          <input id="password" type="password" placeholder="Password" value="Password123!" required>
+        </label>
+        <button type="submit">Accedi</button>
+      </form>
+      <div class="hint">
+        <p><strong>Credenziali demo</strong></p>
+        <p>Paziente: mario.rossi@example.com / Password123!</p>
+        <p>Operatore: segreteria@example.com / Segreteria123!</p>
+        <p>Admin: admin@example.com / Admin123!</p>
+      </div>
+    </section>
+
+    <!-- ============================ APP ============================ -->
+    <section id="app-view" class="hidden">
+      <nav class="tabs">
+        <button class="tab active" data-tab="prenota">Prenota una visita</button>
+        <button class="tab" id="tab-btn-mie" data-tab="mie">Le mie prenotazioni</button>
+        <button class="tab hidden" id="tab-btn-agenda" data-tab="agenda">Agenda</button>
+        <button class="tab hidden" id="tab-btn-admin" data-tab="admin">Amministrazione</button>
+      </nav>
+
+      <!-- -------- PRENOTA (calendario) -------- -->
+      <div id="panel-prenota" class="panel">
+        <div id="operatore-paziente" class="card op-paziente hidden">
+          <label><span class="op-badge">Segreteria</span> Prenota per il paziente
+            <select id="op-paziente"></select>
+          </label>
+        </div>
+        <div class="card">
+          <div class="booking-controls">
+            <label>Medico
+              <select id="medico"></select>
+            </label>
+            <label>Prestazione
+              <select id="prestazione"></select>
+            </label>
+          </div>
+          <p id="prestazione-info" class="prestazione-info"></p>
+        </div>
+
+        <div class="card calendar-card">
+          <div class="calendar-header">
+            <button id="cal-prev" class="btn-ghost" type="button">&#8249; Settimana prec.</button>
+            <span id="cal-range" class="cal-range"></span>
+            <button id="cal-next" class="btn-ghost" type="button">Settimana succ. &#8250;</button>
+          </div>
+          <div id="calendar" class="calendar"></div>
+          <p id="cal-empty" class="empty hidden">Nessuno slot disponibile per questo medico in questo periodo.</p>
+        </div>
+
+        <div id="booking-bar" class="booking-bar hidden">
+          <span id="booking-summary"></span>
+          <div class="booking-bar-actions">
+            <button id="booking-confirm" type="button">Conferma prenotazione</button>
+            <button id="booking-cancel" class="btn-ghost" type="button">Annulla</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- -------- LE MIE PRENOTAZIONI -------- -->
+      <div id="panel-mie" class="panel hidden">
+        <div class="card">
+          <h3>Le mie prenotazioni</h3>
+          <ul id="mie" class="list"></ul>
+        </div>
+      </div>
+
+      <!-- -------- AGENDA (segreteria / admin) -------- -->
+      <div id="panel-agenda" class="panel hidden">
+        <div class="card">
+          <h3>Agenda - tutte le prenotazioni</h3>
+          <div class="agenda-toolbar">
+            <label>Filtra per stato
+              <select id="agenda-stato">
+                <option value="attive">Attive (prenotate)</option>
+                <option value="tutte">Tutte</option>
+                <option value="prenotata">Prenotate</option>
+                <option value="completata">Completate</option>
+                <option value="annullata">Annullate</option>
+              </select>
+            </label>
+            <button id="agenda-refresh" class="btn-ghost" type="button">Aggiorna</button>
+          </div>
+          <table class="admin-table">
+            <thead><tr><th>ID</th><th>Data/ora</th><th>Paziente</th><th>Medico</th><th>Prestazione</th><th>Stato</th><th>Azioni</th></tr></thead>
+            <tbody id="tbody-agenda"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- -------- AMMINISTRAZIONE -------- -->
+      <div id="panel-admin" class="panel hidden">
+        <nav class="subtabs">
+          <button class="subtab active" data-sub="medici">Medici</button>
+          <button class="subtab" data-sub="prestazioni">Prestazioni</button>
+          <button class="subtab" data-sub="assoc">Associazioni</button>
+          <button class="subtab" data-sub="disp">Disponibilita</button>
+          <button class="subtab" data-sub="utenti">Utenti</button>
+        </nav>
+
+        <!-- Medici -->
+        <div id="sub-medici" class="subpanel card">
+          <h3>Gestione Medici</h3>
+          <form id="form-medico" class="grid-form">
+            <input type="hidden" id="medico-id">
+            <input id="medico-nome" placeholder="Nome" required>
+            <input id="medico-cognome" placeholder="Cognome" required>
+            <input id="medico-spec" placeholder="Specializzazione" required>
+            <div class="form-actions">
+              <button type="submit">Salva</button>
+              <button type="button" id="medico-reset" class="btn-ghost">Nuovo</button>
+            </div>
+          </form>
+          <table class="admin-table">
+            <thead><tr><th>ID</th><th>Nome</th><th>Cognome</th><th>Specializzazione</th><th></th></tr></thead>
+            <tbody id="tbody-medici"></tbody>
+          </table>
+        </div>
+
+        <!-- Prestazioni -->
+        <div id="sub-prestazioni" class="subpanel card hidden">
+          <h3>Gestione Prestazioni</h3>
+          <form id="form-prestazione" class="grid-form">
+            <input type="hidden" id="prest-id">
+            <input id="prest-nome" placeholder="Nome" required>
+            <input id="prest-durata" type="number" min="1" placeholder="Durata (min)" required>
+            <input id="prest-prezzo" type="number" min="0" step="0.01" placeholder="Prezzo (EUR)" required>
+            <div class="form-actions">
+              <button type="submit">Salva</button>
+              <button type="button" id="prest-reset" class="btn-ghost">Nuovo</button>
+            </div>
+          </form>
+          <table class="admin-table">
+            <thead><tr><th>ID</th><th>Nome</th><th>Durata</th><th>Prezzo</th><th></th></tr></thead>
+            <tbody id="tbody-prestazioni"></tbody>
+          </table>
+        </div>
+
+        <!-- Associazioni -->
+        <div id="sub-assoc" class="subpanel card hidden">
+          <h3>Associazioni Medico &harr; Prestazione</h3>
+          <div class="assoc-controls">
+            <label>Medico
+              <select id="assoc-medico"></select>
+            </label>
+            <label>Aggiungi prestazione
+              <select id="assoc-prestazione"></select>
+            </label>
+            <button id="assoc-add" type="button">Associa</button>
+          </div>
+          <h4>Prestazioni erogate dal medico selezionato</h4>
+          <ul id="assoc-list" class="list"></ul>
+        </div>
+
+        <!-- Disponibilita -->
+        <div id="sub-disp" class="subpanel card hidden">
+          <h3>Gestione Disponibilita</h3>
+
+          <!-- Step 1: medico -->
+          <div class="disp-step">
+            <label class="step-label"><span class="step-num">1</span> Seleziona il medico
+              <select id="disp-medico"></select>
+            </label>
+          </div>
+
+          <!-- Step 2: generatore ricorrente -->
+          <div class="disp-step disp-generator">
+            <div class="step-title"><span class="step-num">2</span> Genera slot ricorrenti</div>
+            <div class="gen-grid">
+              <label>Dal <input type="date" id="gen-da"></label>
+              <label>Al <input type="date" id="gen-a"></label>
+              <label>Dalle <input type="time" id="gen-ora-da" value="09:00"></label>
+              <label>Alle <input type="time" id="gen-ora-a" value="13:00"></label>
+              <label>Durata slot (min) <input type="number" id="gen-durata" value="30" min="5" step="5"></label>
+            </div>
+            <div class="weekdays" id="gen-giorni"></div>
+            <button id="gen-btn" type="button">Genera slot</button>
+            <span id="gen-result" class="muted"></span>
+          </div>
+
+          <!-- Step 3: calendario slot con eliminazione -->
+          <div class="disp-step">
+            <div class="step-title"><span class="step-num">3</span> Slot del medico (clicca &times; per eliminarne uno)</div>
+            <div class="calendar-header">
+              <button id="disp-prev" class="btn-ghost" type="button">&#8249; Settimana prec.</button>
+              <span id="disp-range" class="cal-range"></span>
+              <button id="disp-next" class="btn-ghost" type="button">Settimana succ. &#8250;</button>
+            </div>
+            <div id="disp-calendar" class="calendar"></div>
+            <p id="disp-empty" class="empty hidden">Nessuno slot per questo medico in questa settimana.</p>
+          </div>
+        </div>
+
+        <!-- Utenti -->
+        <div id="sub-utenti" class="subpanel card hidden">
+          <h3>Gestione Utenti</h3>
+          <form id="form-utente" class="grid-form">
+            <input type="hidden" id="utente-id">
+            <input id="utente-email" type="email" placeholder="Email" required>
+            <input id="utente-password" type="password" placeholder="Password">
+            <label class="inline">Ruolo
+              <select id="utente-ruolo">
+                <option value="paziente">paziente</option>
+                <option value="operatore">operatore</option>
+                <option value="admin">admin</option>
+              </select>
+            </label>
+            <div class="form-actions">
+              <button type="submit">Salva</button>
+              <button type="button" id="utente-reset" class="btn-ghost">Nuovo</button>
+            </div>
+            <div id="utente-paziente-fields" class="paz-fields">
+              <input id="utente-nome" placeholder="Nome">
+              <input id="utente-cognome" placeholder="Cognome">
+              <input id="utente-cf" placeholder="Codice fiscale">
+              <input id="utente-tel" placeholder="Telefono (opzionale)">
+            </div>
+          </form>
+          <p class="muted" id="utente-hint">In modifica, lascia la password vuota per non cambiarla. I campi anagrafici valgono per i nuovi utenti con ruolo paziente.</p>
+          <table class="admin-table">
+            <thead><tr><th>ID</th><th>Email</th><th>Ruolo</th><th></th></tr></thead>
+            <tbody id="tbody-utenti"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
