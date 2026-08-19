@@ -4,9 +4,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db, get_current_paziente, require_role
 from app.models.utente import Utente
 from app.repositories.appuntamento_repository import AppuntamentoRepository
-from app.services.appuntamento_service import (AppuntamentoService, ConflictError,
-                                               NotFoundError, ForbiddenError,
-                                               ValidationError)
+from app.services.appuntamento_service import AppuntamentoService
 from app.services.audit_service import AuditService
 from app.schemas.appuntamento import (AppuntamentoCreate, AppuntamentoOut,
                                       AppuntamentoUpdate, AppuntamentoPerPaziente,
@@ -15,6 +13,10 @@ from app.models.appuntamento import Appuntamento
 
 router = APIRouter()
 
+# Le eccezioni di dominio sollevate dai servizi (NotFound/Forbidden/Conflict/
+# Validation) sono tradotte in risposte HTTP dagli exception handler registrati
+# in `main.py`: i router non le intercettano.
+
 
 def _service(db: Session) -> AppuntamentoService:
     return AppuntamentoService(AppuntamentoRepository(db), AuditService(db))
@@ -22,15 +24,10 @@ def _service(db: Session) -> AppuntamentoService:
 
 # --- Paziente --------------------------------------------------------------
 @router.post("", response_model=AppuntamentoOut, status_code=201)
-def prenota(data: AppuntamentoCreate, paziente=Depends(get_current_paziente), db: Session = Depends(get_db)):
-    try:
-        return _service(db).prenota(paziente.id, paziente.utente_id, data.disponibilita_id, data.prestazione_id)
-    except NotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except ValidationError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except ConflictError as e:
-        raise HTTPException(status_code=409, detail=str(e))
+def prenota(data: AppuntamentoCreate, paziente=Depends(get_current_paziente),
+            db: Session = Depends(get_db)):
+    return _service(db).prenota(paziente.id, paziente.utente_id,
+                                data.disponibilita_id, data.prestazione_id)
 
 
 @router.get("", response_model=List[AppuntamentoOut])
@@ -42,15 +39,9 @@ def le_mie(paziente=Depends(get_current_paziente), db: Session = Depends(get_db)
 def annulla(app_id: int, data: AppuntamentoUpdate, paziente=Depends(get_current_paziente),
             db: Session = Depends(get_db)):
     if data.stato != "annullata":
-        raise HTTPException(status_code=422, detail="Da questo endpoint e ammesso solo stato 'annullata'")
-    try:
-        return _service(db).annulla(paziente.utente_id, paziente.id, app_id)
-    except NotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except ForbiddenError as e:
-        raise HTTPException(status_code=403, detail=str(e))
-    except ConflictError as e:
-        raise HTTPException(status_code=409, detail=str(e))
+        raise HTTPException(status_code=422,
+                            detail="Da questo endpoint e ammesso solo stato 'annullata'")
+    return _service(db).annulla(paziente.utente_id, paziente.id, app_id)
 
 
 # --- Segreteria (operatore) / admin ---------------------------------------
