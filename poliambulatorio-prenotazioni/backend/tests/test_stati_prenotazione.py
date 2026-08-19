@@ -124,3 +124,32 @@ def test_riprogramma_prenotazione_completata():
     r = client.patch(f"/api/v1/appuntamenti/tutti/{app_id}", headers=op,
                      json={"disponibilita_id": slots[1]})
     assert r.status_code == 409, r.text
+
+
+def test_riprogramma_solo_stesso_medico():
+    """La riprogrammazione sposta l'orario, non il medico: uno slot di un altro
+    medico viene respinto anche se quel medico esegue la stessa prestazione."""
+    h = _admin()
+    _, pid, slots = _scenario("Immunologia", "Visita immunologica", "2031-01-17", n_slot=1)
+
+    # Secondo medico che eroga la stessa prestazione, con un proprio slot
+    altro_mid = client.post("/api/v1/admin/medici", headers=h,
+                            json={"nome": "Altro", "cognome": "Medico",
+                                  "specializzazione": "Immunologia clinica"}).json()["id"]
+    client.post(f"/api/v1/admin/medici/{altro_mid}/prestazioni", headers=h,
+                json={"prestazione_id": pid})
+    altro_slot = client.post("/api/v1/admin/disponibilita", headers=h, json={
+        "medico_id": altro_mid,
+        "inizio": "2031-01-17T15:00:00",
+        "fine": "2031-01-17T15:30:00",
+    }).json()["id"]
+
+    op = _operatore()
+    paziente_id = client.get("/api/v1/pazienti", headers=op).json()[0]["id"]
+    app_id = client.post("/api/v1/appuntamenti/operatore", headers=op,
+                         json={"paziente_id": paziente_id, "disponibilita_id": slots[0],
+                               "prestazione_id": pid}).json()["id"]
+
+    r = client.patch(f"/api/v1/appuntamenti/tutti/{app_id}", headers=op,
+                     json={"disponibilita_id": altro_slot})
+    assert r.status_code == 409, r.text
