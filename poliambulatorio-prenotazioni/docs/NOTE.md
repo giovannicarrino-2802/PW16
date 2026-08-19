@@ -76,6 +76,11 @@ trasparenza. Non impediscono l'uso previsto del prototipo.
   gestire il caso di utente non piu' esistente.
 
 ## Note di implementazione
+- Tutti i datetime persistiti (`inizio`, `fine`, `creato_il`, `ts`) sono naive e
+  rappresentano l'**ora locale dell'ambulatorio**: un solo orologio per l'intero
+  database, cosi' un record di audit e' direttamente confrontabile con l'orario
+  di una prenotazione. Unica eccezione il claim `exp` del token JWT, che per
+  specifica e' un timestamp UTC e non viene mai confrontato con i dati.
 - Le eccezioni di dominio (`services/exceptions.py`) sono mappate a codici HTTP
   centralmente in `main.py` (`404/403/409/400`).
 - Convenzione sui codici di errore: `422` segnala un payload che non supera la
