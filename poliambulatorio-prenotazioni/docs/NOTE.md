@@ -26,6 +26,7 @@ avvia il back-end e apri http://localhost:8000/docs (oppure /openapi.json).
 - RF11 audit -> `AuditService` -> `test_audit_registra_operazioni_admin`
 - RF12 segreteria: prenota per conto / agenda / modifica -> `/appuntamenti/operatore`, `/appuntamenti/tutti`, `PATCH /appuntamenti/tutti/{id}` -> `test_segreteria_prenota_per_paziente_e_modifica`
 - RF13 gestione utenti (admin) -> `/admin/utenti` -> `test_crud_utente_operatore`, `test_crea_utente_paziente_con_profilo`, `test_utenti_rbac_e_self_delete`
+- RF14 stati terminali della prenotazione -> `PATCH /appuntamenti/{id}`, `PATCH /appuntamenti/tutti/{id}` -> `test_paziente_non_annulla_due_volte`, `test_segreteria_non_annulla_due_volte`, `test_riprogramma_solo_prenotazioni_attive`, `test_riprogramma_prenotazione_completata`
 
 ## Ruoli (RBAC)
 - **paziente**: prenota per se', vede/annulla le proprie prenotazioni.
@@ -38,6 +39,14 @@ avvia il back-end e apri http://localhost:8000/docs (oppure /openapi.json).
 CREATE/UPDATE/DELETE_MEDICO, CREATE/UPDATE/DELETE_PRESTAZIONE,
 LINK/UNLINK_MEDICO_PRESTAZIONE, CREATE/UPDATE/DELETE_DISPONIBILITA,
 CREATE/CANCEL/COMPLETE/RESCHEDULE_APPUNTAMENTO, CREATE/UPDATE/DELETE_UTENTE.
+
+## Ciclo di vita della prenotazione
+`prenotata` e' l'unico stato attivo; `annullata` e `completata` sono **stati
+terminali** e non ammettono ulteriori transizioni (annullamento ripetuto o
+riprogrammazione rispondono `409`). Il vincolo esiste perche' solo una
+prenotazione attiva "possiede" il proprio slot: agire su una prenotazione gia
+terminata libererebbe uno slot che nel frattempo puo' appartenere a un'altra
+prenotazione. Copertura: `tests/test_stati_prenotazione.py`.
 
 ## Note di implementazione
 - Le eccezioni di dominio (`services/exceptions.py`) sono mappate a codici HTTP
