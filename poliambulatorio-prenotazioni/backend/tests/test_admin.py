@@ -181,7 +181,7 @@ def test_associazione_medico_prestazione():
                     json={"prestazione_id": pid})
     assert r.status_code == 201, r.text
 
-    # ora compare sia sull'endpoint admin sia su quello pubblico
+    # compare sia sull'endpoint admin sia su quello per utenti autenticati
     ass = client.get(f"/api/v1/admin/medici/{mid}/prestazioni", headers=h).json()
     assert any(p["id"] == pid for p in ass)
     pub = client.get(f"/api/v1/medici/{mid}/prestazioni", headers=_paziente()).json()
