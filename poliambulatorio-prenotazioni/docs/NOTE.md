@@ -60,6 +60,7 @@ trasparenza. Non impediscono l'uso previsto del prototipo.
   usa una join su medico e prestazione, le prenotazioni orfane non compaiono
   piu' nell'elenco anziche' generare un errore. Mitigazione operativa: eliminare
   medici e prestazioni solo se non hanno prenotazioni collegate.
+- **Audit log conservato oltre la vita dell'utente.** L'eliminazione di un utente rimuove il profilo paziente e le sue prenotazioni, ma non i record di `audit_log`, che restano con un `utente_id` non piu' risolvibile. E' una scelta intenzionale: cancellare la tracciabilita delle azioni passate insieme all'utente vanificherebbe lo scopo del log. Chi consulta l'audit deve quindi gestire il caso di utente non piu' esistente.
 
 ## Note di implementazione
 - Le eccezioni di dominio (`services/exceptions.py`) sono mappate a codici HTTP
