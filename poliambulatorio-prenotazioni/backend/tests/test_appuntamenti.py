@@ -55,8 +55,9 @@ def test_slot_occupato_genera_conflitto():
     assert r2.status_code in (404, 409)
 
 
-def test_prestazioni_del_medico_pubblico():
-    """L'endpoint pubblico ritorna solo le prestazioni associate al medico."""
+def test_prestazioni_del_medico():
+    """L'endpoint ritorna solo le prestazioni associate al medico e richiede
+    un utente autenticato."""
     h = _auth()
     medici = client.get("/api/v1/medici", headers=h).json()
     mid = medici[0]["id"]
@@ -64,3 +65,5 @@ def test_prestazioni_del_medico_pubblico():
     assert isinstance(prest, list) and len(prest) >= 1
     for p in prest:
         assert "id" in p and "nome" in p
+    # senza token l'endpoint non e' accessibile
+    assert client.get(f"/api/v1/medici/{mid}/prestazioni").status_code == 401
