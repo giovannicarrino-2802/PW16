@@ -8,4 +8,5 @@ class Utente(Base):
     email = Column(String, unique=True, nullable=False, index=True)
     password_hash = Column(String, nullable=False)
     ruolo = Column(String, nullable=False, default="paziente")
-    creato_il = Column(DateTime, default=datetime.utcnow)
+    # Ora locale dell'ambulatorio, come tutti i datetime persistiti.
+    creato_il = Column(DateTime, default=datetime.now)
