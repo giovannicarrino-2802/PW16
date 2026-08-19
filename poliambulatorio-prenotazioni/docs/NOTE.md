@@ -3,10 +3,19 @@
 Questa cartella raccoglie gli artefatti di design del PW16.
 
 ## Diagrammi
-- `ER.md`             -> diagramma entita-relazione (Mermaid) del modello dati
-- `uml/use-case.png`  -> attori (Paziente, Operatore, Admin) e casi d'uso *(da produrre)*
-- `uml/class.png`     -> modello di dominio *(da produrre)*
-- `uml/sequence-prenota.png` -> flusso "Prenota visita" *(da produrre)*
+Tutti in Mermaid, renderizzati direttamente da GitHub.
+
+| File | Contenuto |
+|---|---|
+| [`casi-uso.md`](casi-uso.md) | Attori (Paziente, Operatore, Admin) e casi d'uso |
+| [`architettura.md`](architettura.md) | Architettura a livelli e responsabilita |
+| [`ER.md`](ER.md) | Modello dati: entita, relazioni e vincoli |
+| [`classi-prenotazione.md`](classi-prenotazione.md) | Classi della fetta verticale "Prenota visita" |
+| [`sequenza-prenotazione.md`](sequenza-prenotazione.md) | Flusso completo della prenotazione |
+| [`stati-prenotazione.md`](stati-prenotazione.md) | Ciclo di vita di un appuntamento |
+
+Il file `Architettura_logica.drawio` nella radice del progetto e' la versione
+editabile del diagramma di architettura, in formato draw.io.
 
 ## API
 La documentazione OpenAPI/Swagger e' generata automaticamente da FastAPI:
@@ -29,11 +38,48 @@ avvia il back-end e apri http://localhost:8000/docs (oppure /openapi.json).
 - RF14 stati terminali della prenotazione -> `PATCH /appuntamenti/{id}`, `PATCH /appuntamenti/tutti/{id}` -> `test_paziente_non_annulla_due_volte`, `test_segreteria_non_annulla_due_volte`, `test_riprogramma_solo_prenotazioni_attive`, `test_riprogramma_prenotazione_completata`
 
 ## Ruoli (RBAC)
-- **paziente**: prenota per se', vede/annulla le proprie prenotazioni.
-- **operatore** (segreteria): prenota per conto dei pazienti, vede l'agenda di
-  tutti e puo' annullare / completare / riprogrammare qualsiasi prenotazione.
-- **admin**: tutto quanto sopra + gestione medici, prestazioni, associazioni,
-  disponibilita e utenti.
+
+- **paziente**: prenota per se', consulta e annulla le proprie prenotazioni.
+- **operatore** (segreteria): prenota per conto dei pazienti, consulta l'agenda
+  di tutti e puo' annullare / completare / riprogrammare qualsiasi prenotazione.
+- **admin**: tutto quanto sopra piu' la configurazione del poliambulatorio
+  (medici, prestazioni, associazioni, disponibilita, utenti).
+
+### Matrice dei permessi
+
+Legenda: **X** consentito - **-** negato (`403`) - **n/a** non applicabile al ruolo.
+
+| Endpoint | Metodo | paziente | operatore | admin | Dipendenza |
+|---|---|:--:|:--:|:--:|---|
+| `/auth/register` | POST | X | X | X | nessuna (pubblico) |
+| `/auth/login` | POST | X | X | X | nessuna (pubblico) |
+| `/auth/me` | GET | X | X | X | `get_current_user` |
+| `/medici` | GET | X | X | X | `get_current_user` |
+| `/medici/{id}/prestazioni` | GET | X | X | X | `get_current_user` |
+| `/medici/{id}/disponibilita` | GET | X | X | X | `get_current_user` |
+| `/prestazioni` | GET | X | X | X | `get_current_user` |
+| `/appuntamenti` | POST | X | n/a | n/a | `get_current_paziente` |
+| `/appuntamenti` | GET | X | n/a | n/a | `get_current_paziente` |
+| `/appuntamenti/{id}` | PATCH | X | n/a | n/a | `get_current_paziente` |
+| `/appuntamenti/tutti` | GET | - | X | X | `require_role("operatore","admin")` |
+| `/appuntamenti/admin/tutti` | GET | - | X | X | `require_role("operatore","admin")` |
+| `/appuntamenti/operatore` | POST | - | X | X | `require_role("operatore","admin")` |
+| `/appuntamenti/tutti/{id}` | PATCH | - | X | X | `require_role("operatore","admin")` |
+| `/pazienti` | GET | - | X | X | `require_role("operatore","admin")` |
+| `/admin/medici` | GET POST PUT DELETE | - | - | X | `require_admin` |
+| `/admin/medici/{id}/prestazioni` | GET POST DELETE | - | - | X | `require_admin` |
+| `/admin/prestazioni` | GET POST PUT DELETE | - | - | X | `require_admin` |
+| `/admin/disponibilita` | GET POST PUT DELETE | - | - | X | `require_admin` |
+| `/admin/disponibilita/genera` | POST | - | - | X | `require_admin` |
+| `/admin/utenti` | GET POST PUT DELETE | - | - | X | `require_admin` |
+
+Note:
+- Gli endpoint marcati **n/a** per operatore e admin richiedono un profilo
+  paziente collegato all'utente: un account di segreteria non ne ha uno e
+  riceve `403` da `get_current_paziente`.
+- Senza token qualsiasi endpoint protetto risponde `401`.
+- L'admin non puo' eliminare il proprio account (`403`), per non lasciare il
+  sistema privo di amministratori.
 
 ## Azioni di audit registrate
 CREATE/UPDATE/DELETE_MEDICO, CREATE/UPDATE/DELETE_PRESTAZIONE,
