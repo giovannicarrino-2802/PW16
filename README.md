@@ -1,14 +1,12 @@
-# Poliambulatorio - Sistema gestionale prenotazioni
-
-Applicazione full-stack API-based per la gestione di un poliambulatorio:
-prenotazione di visite specialistiche **e** area amministrativa completa per la
-gestione di medici, prestazioni, disponibilita e associazioni medico-prestazione.
+# Piattaforma di prenotazione di visite specialistiche
 
 Project Work PW16 - CdS Informatica per le Aziende Digitali (L-31).
 
+Applicazione full-stack API-based per un'organizzazione del settore sanitario allo scopo di supportare il processo organizzativo per la prenotazione di visite specialistiche, la gestione di medici, prestazioni, disponibilita', associazioni medico-prestazione e utenti.
+
 Il codice sorgente si trova nella cartella
 [`poliambulatorio-prenotazioni/`](poliambulatorio-prenotazioni/); questo file
-descrive il progetto nel suo insieme.
+descrive brevemente il progetto nel suo insieme.
 
 ## Architettura (a livelli)
 
@@ -23,32 +21,41 @@ Il livello **Servizi** applica le regole di business (es. una prestazione puo'
 essere prenotata solo se associata al medico); il livello **Repository** isola
 l'accesso ai dati; le **API** traducono le eccezioni di dominio in codici HTTP.
 
-## Architettura e funzionalita principali
+## Funzionalita' principali
 
-1. **Entita `MedicoPrestazione`**: tabella di associazione molti-a-molti
-   tra `Medico` e `Prestazione` (`id`, `medico_id`, `prestazione_id`, con vincolo
-   di unicita). Relazioni ORM `Medico.prestazioni` / `Prestazione.medici` e
-   `Medico.disponibilita`.
-2. **Repository**: `MedicoRepository`, `PrestazioneRepository`,
-   `DisponibilitaRepository`, oltre a quello degli appuntamenti, esteso con
-   `prestazione()` e `medico_esegue()`.
-3. **Servizi**: `MedicoService`, `PrestazioneService`,
-   `DisponibilitaService`, ognuno con audit log integrato. Eccezioni di dominio
-   centralizzate in `services/exceptions.py`
-   (`NotFound/Forbidden/Conflict/ValidationError`).
-4. **Router amministrativi** in `app/api/v1/admin/` protetti via RBAC
-   (`require_admin`, ruolo `admin`), con gestione errori centralizzata tramite
-   `exception_handler` in `main.py`.
-5. **Validazione della prenotazione**: la coppia medico-prestazione viene sempre
-   verificata; le richieste non valide restituiscono `400`.
-6. **Endpoint** `GET /medici/{id}/prestazioni` e `GET /auth/me` (per il ruolo
-   lato front-end), entrambi riservati agli utenti autenticati.
-7. **Front-end**: tendina prestazioni popolata in base al medico,
-   selezione slot tramite **calendario settimanale scorrevole**, e **area
-   amministrativa** visibile solo agli utenti `admin`.
-8. **Seed**: 5 medici, 10 prestazioni, associazioni e disponibilita
-   realistiche, e i tre utenti demo (paziente, operatore di segreteria,
-   amministratore).
+Ogni ruolo dispone di endpoint propri, cosi' che l'audit log registri sempre chi
+ha compiuto l'operazione e per conto di chi.
+
+**Paziente** — sceglie il medico e vede le sole prestazioni che quel medico
+eroga; seleziona lo slot su un calendario settimanale scorrevole con le
+disponibilita libere e future. Puo' prenotare, consultare le proprie
+prenotazioni e annullarle.
+
+**Operatore di segreteria** — lavora sull'agenda completa della struttura:
+prenota per conto di un paziente, annulla, completa e riprogramma. Non avendo un
+profilo paziente collegato, gli endpoint di prenotazione personale gli sono
+preclusi.
+
+**Amministratore** — configura l'offerta clinica tramite i router riservati in
+`app/api/v1/admin/`: anagrafica di medici e prestazioni, associazione tra i due,
+agende e gestione utenti.
+
+### Regole applicate lato server
+
+Il front-end non applica vincoli: ogni regola e' verificata dai servizi e
+tradotta in codice HTTP da un punto unico (`main.py`).
+
+| Regola | Violazione |
+|---|---|
+| La prestazione deve essere erogata dal medico scelto | `400` |
+| Lo slot deve essere libero | `409` |
+| `annullata` e `completata` sono stati terminali | `409` |
+| La riprogrammazione avviene su uno slot dello stesso medico | `400` |
+| L'operazione deve essere consentita al ruolo | `403` |
+
+Struttura interna e flussi nei diagrammi in
+[`docs/`](poliambulatorio-prenotazioni/docs/). Il seed iniziale crea 5 medici,
+10 prestazioni, le relative agende e tre utenti demo, uno per ruolo.
 
 ## Struttura del repository
 
