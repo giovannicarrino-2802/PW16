@@ -3,7 +3,6 @@
 La cartella [`docs/`](.) raccoglie gli artefatti di design del PW16.
 
 ## Diagrammi
-Tutti in Mermaid, renderizzati direttamente da GitHub.
 
 | File | Contenuto |
 |---|---|
@@ -14,24 +13,21 @@ Tutti in Mermaid, renderizzati direttamente da GitHub.
 | [`sequenza-prenotazione.md`](sequenza-prenotazione.md) | Flusso completo della prenotazione |
 | [`stati-prenotazione.md`](stati-prenotazione.md) | Ciclo di vita di un appuntamento |
 
-Il file `Architettura_logica.drawio` nella radice del progetto e' la versione
-editabile del diagramma di architettura, in formato draw.io.
-
 ## API
 La documentazione OpenAPI/Swagger e' generata automaticamente da FastAPI:
-avvia il back-end e apri http://localhost:8000/docs (oppure /openapi.json).
+disponibile al link http://localhost:8000/docs dopo aver avviato il backend.
 
 ## Mappa requisito -> endpoint -> test
 - RF1 autenticazione -> `/auth/login`, `/auth/me` -> `test_login_demo`, `test_me_ritorna_ruolo`
-- RF2 ricerca disponibilita -> `/medici/{id}/disponibilita` -> `test_prenota_e_lista` (copertura indiretta)
+- RF2 ricerca disponibilita' -> `/medici/{id}/disponibilita` -> `test_prenota_e_lista` (copertura indiretta)
 - RF3 prestazioni per medico -> `/medici/{id}/prestazioni` -> `test_prestazioni_del_medico`
 - RF4 prenotazione (validata) -> `POST /appuntamenti` -> `test_prenota_e_lista`, `test_slot_occupato_genera_conflitto`, `test_prenotazione_non_valida_bloccata`
 - RF5 le mie prenotazioni / annulla -> `GET /appuntamenti`, `PATCH /appuntamenti/{id}`
-- RF5b titolarita della prenotazione -> `PATCH /appuntamenti/{id}` -> `test_paziente_non_annulla_prenotazione_altrui`
+- RF5b titolarita' della prenotazione -> `PATCH /appuntamenti/{id}` -> `test_paziente_non_annulla_prenotazione_altrui`
 - RF6 agenda operatore -> `GET /appuntamenti/tutti`
 - RF7 gestione medici (admin) -> `/admin/medici` -> `test_crud_medico`, `test_rbac_*`
 - RF8 gestione prestazioni (admin) -> `/admin/prestazioni` -> `test_crud_prestazione`, `test_prestazione_validazione`
-- RF9 gestione disponibilita (admin) -> `/admin/disponibilita` -> `test_crud_disponibilita`, `test_disponibilita_intervallo_non_valido`
+- RF9 gestione disponibilita' (admin) -> `/admin/disponibilita` -> `test_crud_disponibilita`, `test_disponibilita_intervallo_non_valido`
 - RF10 associazioni medico-prestazione -> `/admin/medici/{id}/prestazioni` -> `test_associazione_medico_prestazione`
 - RF11 audit -> `AuditService` -> `test_audit_registra_operazioni_admin`
 - RF12 segreteria: prenota per conto / agenda / modifica -> `/appuntamenti/operatore`, `/appuntamenti/tutti`, `PATCH /appuntamenti/tutti/{id}` -> `test_segreteria_prenota_per_paziente_e_modifica`
@@ -73,13 +69,13 @@ Legenda: **X** consentito - **-** negato (`403`) - **n/a** non applicabile al ru
 | `/admin/disponibilita/genera` | POST | - | - | X | `require_admin` |
 | `/admin/utenti` | GET POST PUT DELETE | - | - | X | `require_admin` |
 
-Note:
-- Gli endpoint marcati **n/a** per operatore e admin richiedono un profilo
-  paziente collegato all'utente: un account di segreteria non ne ha uno e
-  riceve `403` da `get_current_paziente`.
-- Senza token qualsiasi endpoint protetto risponde `401`.
-- L'admin non puo' eliminare il proprio account (`403`), per non lasciare il
-  sistema privo di amministratori.
+>Note:
+>- Gli endpoint marcati **n/a** per operatore e admin richiedono un profilo
+>  paziente collegato all'utente: un account di segreteria non ne ha uno e
+>  riceve `403` da `get_current_paziente`.
+>- Senza token qualsiasi endpoint protetto risponde `401`.
+>- L'admin non puo' eliminare il proprio account (`403`), per non lasciare il
+>  sistema privo di amministratori.
 
 ## Azioni di audit registrate
 CREATE/UPDATE/DELETE_MEDICO, CREATE/UPDATE/DELETE_PRESTAZIONE,
@@ -93,14 +89,13 @@ riprogrammazione rispondono `409`). Il vincolo esiste perche' solo una
 prenotazione attiva "possiede" il proprio slot: agire su una prenotazione gia
 terminata libererebbe uno slot che nel frattempo puo' appartenere a un'altra
 prenotazione. La riprogrammazione inoltre sposta solo l'orario: il nuovo slot
-deve appartenere allo **stesso medico** (altrimenti `409`), perche' cambiare
-medico equivarrebbe a una prenotazione diversa da quella scelta dal paziente e
+deve appartenere allo stesso medico (altrimenti `409`), perche' cambiare
+medico equivalrebbe a una prenotazione diversa da quella scelta dal paziente e
 va gestita annullando e riprenotando. Copertura:
 `tests/test_stati_prenotazione.py`.
 
 ## Limiti noti
-Scelte consapevoli o vincoli non risolti nella soluzione, elencati per
-trasparenza. Non impediscono l'uso previsto del prototipo.
+Scelte consapevoli o vincoli non risolti nella soluzione. Non impediscono l'uso previsto del prototipo.
 
 - **Integrita referenziale non applicata dal database.** SQLite non verifica le
   foreign key se non viene attivato `PRAGMA foreign_keys=ON`, qui non impostato.
@@ -121,22 +116,21 @@ trasparenza. Non impediscono l'uso previsto del prototipo.
 - **Audit log conservato oltre la vita dell'utente.** L'eliminazione di un utente
   rimuove il profilo paziente e le sue prenotazioni, ma non i record di
   `audit_log`, che restano con un `utente_id` non piu' risolvibile. E' una scelta
-  intenzionale: cancellare la tracciabilita delle azioni passate insieme
-  all'utente vanificherebbe lo scopo del log. Chi consulta l'audit deve quindi
-  gestire il caso di utente non piu' esistente.
+  intenzionale: cancellare la tracciabilita' delle azioni passate insieme
+  all'utente vanificherebbe lo scopo del log.
 
 ## Note di implementazione
-- Tutti i datetime persistiti (`inizio`, `fine`, `creato_il`, `ts`) sono naive e
-  rappresentano l'**ora locale dell'ambulatorio**: un solo orologio per l'intero
-  database, cosi' un record di audit e' direttamente confrontabile con l'orario
-  di una prenotazione. Unica eccezione il claim `exp` del token JWT, che per
+- Il database conserva tutti i datetime (`inizio`, `fine`, `creato_il`, `ts`)
+  in forma naive, riferiti all'ora locale dell'ambulatorio: un solo orologio
+  per l'intero database, cosi' un record di audit e' direttamente confrontabile
+  con l'orario di una prenotazione. Unica eccezione il claim `exp` del token JWT, che per
   specifica e' un timestamp UTC e non viene mai confrontato con i dati.
-- I test condividono un **unico database di sessione**: `conftest.py` cancella
+- I test condividono un unico database di sessione: `conftest.py` cancella
   e ricrea `test_poliambulatorio.db` una sola volta all'avvio della suite, poi
   il seed lo ripopola. Non c'e' isolamento fra file: ogni prenotazione consuma
   uno slot, che i test successivi non trovano piu' fra quelli liberi. I test che
   hanno bisogno di risorse specifiche (medico, prestazione, slot) se le creano
-  quindi tramite gli endpoint amministrativi anziche' pescare dal seed. Da
+  quindi tramite gli endpoint amministrativi anziche' attingere dal seed. Da
   eseguire con `pytest` sull'intera cartella: lanciare un singolo file parte da
   uno stato diverso, e l'esecuzione in parallelo non e' supportata.
 - Le eccezioni di dominio (`services/exceptions.py`) sono mappate a codici HTTP
