@@ -79,7 +79,8 @@ PW16/
 
 ## Avvio del back-end
 
-> Requisiti: - **Python 3.10 o superiore** (`python --version` per verificare). Su Windows,
+> Requisiti:
+>- **Python 3.10 o superiore** (`python --version` per verificare). Su Windows,
 > in fase di installazione, spunta *Add Python to PATH*.
 >- **Connessione a Internet** per il solo `pip install`; l'applicazione poi gira
 >  in locale.
