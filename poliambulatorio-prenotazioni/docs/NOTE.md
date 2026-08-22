@@ -1,6 +1,6 @@
 # Documentazione di progetto
 
-Questa cartella raccoglie gli artefatti di design del PW16.
+La cartella [`docs/`](poliambulatorio-prenotazioni/docs/) raccoglie gli artefatti di design del PW16.
 
 ## Diagrammi
 Tutti in Mermaid, renderizzati direttamente da GitHub.
