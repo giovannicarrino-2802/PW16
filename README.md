@@ -33,8 +33,7 @@ prenotazioni e annullarle.
 
 **Operatore di segreteria** — lavora sull'agenda completa della struttura:
 prenota per conto di un paziente, annulla, completa e riprogramma. Non avendo un
-profilo paziente collegato, gli endpoint di prenotazione personale gli sono
-preclusi.
+profilo paziente collegato, gli endpoint di prenotazione personale non sono disponibili.
 
 **Amministratore** — configura l'offerta clinica tramite i router riservati in
 `app/api/v1/admin/`: anagrafica di medici e prestazioni, associazione tra i due,
@@ -80,21 +79,37 @@ PW16/
 
 ## Avvio del back-end
 
-> Nota: `requirements.txt` si trova nella radice del progetto
-> (`poliambulatorio-prenotazioni/`), non in `backend/`. Avviando dal folder
-> `backend/`, installa le dipendenze con `..\requirements.txt` (Windows)
-> oppure `../requirements.txt` (macOS/Linux).
+> Requisiti: - **Python 3.10 o superiore** (`python --version` per verificare). Su Windows,
+> in fase di installazione, spunta *Add Python to PATH*.
+>- **Connessione a Internet** per il solo `pip install`; l'applicazione poi gira
+>  in locale.
+>- **Circa 300 MB liberi** su disco: l'ambiente virtuale con le dipendenze ne
+>  occupa circa 250, il database SQLite pochi MB.
+>- **Windows: policy di esecuzione.** L'attivazione del venv da PowerShell puo'
+>  essere bloccata dalla policy predefinita. In quel caso esegui, nella stessa
+>  sessione:
+>```powershell
+>  Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+>```
+>  L'effetto e' limitato alla finestra corrente e non modifica le impostazioni
+>  del sistema.
+>- **`requirements.txt` si trova nella radice del progetto**
+>  (`poliambulatorio-prenotazioni/`), non in `backend/`: avviando dal folder
+>  `backend/` il percorso e' `..\requirements.txt` su Windows,
+>  `../requirements.txt` su macOS/Linux.
 
 ### Windows (PowerShell)
+
+Assicurarsi che Python sia installato nel sistema.
 
 ```powershell
 cd poliambulatorio-prenotazioni\backend
 python -m venv .venv
+# Se l'attivazione e' bloccata da policy, eseguire prima:
+# Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
 .venv\Scripts\activate
-# Se l'attivazione e' bloccata dalla policy, esegui prima:
-#   Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
-# poi riprova ad attivare il venv.
 pip install -r ..\requirements.txt
+# ignorare eventuali messaggi di aggiornamento
 uvicorn app.main:app --reload
 ```
 
@@ -114,7 +129,7 @@ uvicorn app.main:app --reload
 ### Credenziali demo
 - Paziente:  mario.rossi@example.com  /  Password123!
 - Operatore: segreteria@example.com   /  Segreteria123!
-- **Admin:   admin@example.com        /  Admin123!**
+- Admin:   admin@example.com        /  Admin123!
 
 ## Front-end
 Apri `poliambulatorio-prenotazioni/frontend/index.html` nel browser (con il
