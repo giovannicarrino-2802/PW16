@@ -4,37 +4,50 @@ Organizzazione a livelli del sistema e responsabilita di ciascuno.
 Versione navigabile su GitHub del diagramma `Architettura_logica.drawio`.
 
 ```mermaid
-flowchart TB
-    %% Asse portante dell'architettura
-    FE -->|"HTTP - JSON<br/>Authorization: Bearer"| RT
-    RT --> SVC
-    SVC --> REP
-    REP --> ORM
-
-    subgraph L1["1. Presentazione"]
-        FE["Front-end<br/>HTML - CSS - JavaScript<br/><i>index.html, app.js, api.js</i>"]
-    end
-
-    subgraph L2["2. API REST"]
-        direction LR
-        RT["Router FastAPI<br/><i>auth, medici, prestazioni,<br/>appuntamenti, pazienti, admin/</i>"]
-        DEP["Dipendenze<br/><i>deps.py: get_current_user,<br/>require_role, require_admin</i>"]
+flowchart LR
+    %% -- BLOCCO SINISTRO --
+    subgraph MACRO_SX ["Area Front-End e Interfaccia"]
+        direction TB
         
-        RT --> DEP
-    end
+        subgraph L1["1. Presentazione"]
+            FE["Front-end<br/>HTML - CSS - JavaScript<br/><i>index.html, app.js, api.js</i>"]
+        end
 
-    subgraph L3["3. Logica applicativa"]
-        direction LR
-        SVC["Servizi<br/><i>AppuntamentoService, MedicoService,<br/>PrestazioneService, DisponibilitaService,<br/>UtenteService, AuditService</i>"]
-        EXC["Eccezioni di dominio<br/><i>NotFound, Forbidden,<br/>Conflict, Validation</i>"]
+        subgraph L2["2. API REST"]
+            direction LR
+            RT["Router FastAPI<br/><i>auth, medici, prestazioni,<br/>appuntamenti, pazienti, admin/</i>"]
+            DEP["Dipendenze<br/><i>deps.py: get_current_user,<br/>require_role, require_admin</i>"]
+            
+            RT --> DEP
+        end
         
-        SVC --> EXC
+        FE -->|"HTTP - JSON<br/>Authorization: Bearer"| RT
     end
 
-    subgraph L4["4. Accesso ai dati"]
-        REP["Repository<br/><i>AppuntamentoRepository, MedicoRepository,<br/>PrestazioneRepository, DisponibilitaRepository,<br/>UtenteRepository</i>"]
+    %% -- BLOCCO DESTRO --
+    subgraph MACRO_DX ["Area Business Logic e Dati"]
+        direction TB
+        
+        subgraph L3["3. Logica applicativa"]
+            direction LR
+            SVC["Servizi<br/><i>AppuntamentoService, MedicoService,<br/>PrestazioneService, DisponibilitaService,<br/>UtenteService, AuditService</i>"]
+            EXC["Eccezioni di dominio<br/><i>NotFound, Forbidden,<br/>Conflict, Validation</i>"]
+            
+            SVC --> EXC
+        end
+
+        subgraph L4["4. Accesso ai dati"]
+            REP["Repository<br/><i>AppuntamentoRepository, MedicoRepository,<br/>PrestazioneRepository, DisponibilitaRepository,<br/>UtenteRepository</i>"]
+        end
+        
+        SVC --> REP
     end
 
+    %% -- COLLEGAMENTI TRA SINISTRA E DESTRA --
+    RT -->|Richieste| SVC
+    EXC -.->|"mappate a<br/>404/403/409/400"| RT
+
+    %% -- MODULI SOTTOSTANTI / TRASVERSALI --
     subgraph L5["5. Persistenza"]
         direction LR
         ORM["Modelli ORM SQLAlchemy<br/><i>Utente, Paziente, Medico, Prestazione,<br/>MedicoPrestazione, Disponibilita,<br/>Appuntamento, AuditLog</i>"]
@@ -50,10 +63,8 @@ flowchart TB
         AUD["Audit logging<br/>tracciamento delle<br/>operazioni rilevanti"]
     end
 
-    %% Collegamento di ritorno delle eccezioni (più lungo per non spezzare il layout)
-    EXC -.->|"mappate a<br/>404/403/409/400"| RT
-
-    %% Collegamenti dalle funzionalità trasversali (Cross-cutting)
+    %% -- COLLEGAMENTI FINALI --
+    REP --> ORM
     SEC -.-> DEP
     VAL -.-> RT
     AUD -.-> SVC
