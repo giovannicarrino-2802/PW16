@@ -18,10 +18,12 @@ from app.services.exceptions import (NotFoundError, ForbiddenError,
 Base.metadata.create_all(bind=engine)
 seed.run()   # dati di esempio, idempotente
 
-app = FastAPI(title="Poliambulatorio API", version="1.0.0",
-              description="Sistema gestionale per poliambulatorio: prenotazioni, "
+app = FastAPI(title="API Piattaforma di prenotazione di visite specialistiche", version="1.0.0",
+              description="Project Work PW16 - Sviluppo di una applicazione full-stack API-based per"
+                          "un’organizzazione del settore sanitario" \
+                          "Applicativo gestionale per poliambulatorio: prenotazioni, "
                           "gestione medici/prestazioni/disponibilita e area "
-                          "amministrativa (RBAC) - Project Work PW16")
+                          "amministrativa - ")
 
 # Auth via header Bearer, non cookie: credenziali cross-origin non necessarie.
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=False,
