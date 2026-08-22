@@ -1,4 +1,4 @@
-from app.services.exceptions import (  # noqa: F401  (ri-esportate per compatibilita)
+from app.services.exceptions import (
     ConflictError,
     NotFoundError,
     ForbiddenError,
@@ -9,11 +9,8 @@ from app.services.exceptions import (  # noqa: F401  (ri-esportate per compatibi
 class AppuntamentoService:
     """Livello di business: applica le regole di prenotazione.
 
-    Ciclo di vita di una prenotazione: `prenotata` e' l'unico stato attivo;
-    `annullata` e `completata` sono stati terminali e non ammettono ulteriori
-    transizioni. Solo una prenotazione attiva "possiede" il proprio slot: per
-    questo le operazioni che liberano lo slot sono ammesse esclusivamente a
-    partire dallo stato `prenotata`."""
+    `prenotata` e' l'unico stato attivo; `annullata` e `completata` sono
+    terminali. Motivazione estesa in docs/NOTE.md."""
 
     def __init__(self, repo, audit):
         self.repo = repo
@@ -112,17 +109,13 @@ class AppuntamentoService:
         if app is None:
             raise NotFoundError("Appuntamento inesistente")
         if app.stato != "prenotata":
-            # Uno slot e' "posseduto" solo da una prenotazione attiva: spostare
-            # una prenotazione terminata liberebbe uno slot che nel frattempo
-            # potrebbe appartenere a un'altra prenotazione.
+            # Lo slot e' legato solo a una prenotazione attiva.
             raise ConflictError("Sono riprogrammabili solo le prenotazioni attive")
         nuovo = self.repo.slot(nuovo_slot_id)
         if nuovo is None:
             raise NotFoundError("Slot inesistente")
         if nuovo.medico_id != app.medico_id:
-            # La riprogrammazione sposta solo l'orario: cambiare il medico
-            # equivarrebbe a una prenotazione diversa da quella scelta dal
-            # paziente, e va gestita annullando e riprenotando.
+            # La riprogrammazione sposta l'orario, non il medico.
             raise ConflictError(
                 "Il nuovo slot deve appartenere allo stesso medico della prenotazione")
         if nuovo.occupato and nuovo.id != app.disponibilita_id:

@@ -45,7 +45,7 @@ def _crea_prestazioni(db):
 
 
 def _associa(db, medici, prest):
-    # Associazioni realistiche: ogni medico esegue le prestazioni della sua area.
+    # Ogni medico esegue le prestazioni della propria area.
     mappa = {
         "bianchi": ["cardio", "ecg"],
         "verdi":   ["derma", "nei"],
@@ -62,7 +62,7 @@ def _associa(db, medici, prest):
 
 def _crea_disponibilita(db, medici):
     # Slot da 30 minuti, 09:00-13:00, nei prossimi 14 giorni feriali (Lun-Ven).
-    oggi = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    oggi = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     for m in medici.values():
         for delta in range(1, 15):
             giorno = oggi + timedelta(days=delta)

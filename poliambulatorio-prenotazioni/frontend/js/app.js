@@ -1,5 +1,8 @@
 /* =========================================================================
    Poliambulatorio - logica front-end (vanilla JS)
+
+   I controlli fatti qui sono agevolazioni d'uso, non controlli di sicurezza:
+   la validazione effettiva risiede interamente nel back-end.
    ========================================================================= */
 
 const $ = (id) => document.getElementById(id);
@@ -141,7 +144,7 @@ async function onEnterBooking() {
   if (isStaff()) await loadPazientiSelect();
 
   sel.onchange = onMedicoChange;
-  await onMedicoChange();   // Fase 1+2+3: popola prestazioni e calendario del medico
+  await onMedicoChange();   // popola prestazioni e calendario del medico selezionato
 }
 
 // Popola il selettore paziente usato dalla segreteria per prenotare per conto altrui
@@ -168,13 +171,13 @@ async function loadPazientiSelect() {
 }
 
 /* ============================ PRENOTAZIONE ============================ */
-// Fase 2/3/4: al cambio medico ricarica prestazioni associate e calendario
+// Al cambio medico ricarica prestazioni associate e calendario
 async function onMedicoChange() {
   const mid = $("medico").value;
   selectedSlot = null;
   $("booking-bar").classList.add("hidden");
 
-  // Svuota e ricarica la tendina prestazioni con SOLO quelle del medico
+  // Svuota e ricarica la tendina con le sole prestazioni del medico
   const ps = $("prestazione");
   ps.innerHTML = "";
   $("prestazione-info").textContent = "";

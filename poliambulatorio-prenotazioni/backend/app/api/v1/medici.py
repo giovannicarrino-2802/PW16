@@ -24,10 +24,9 @@ def disponibilita(medico_id: int, db: Session = Depends(get_db), _=Depends(get_c
 @router.get("/{medico_id}/prestazioni", response_model=List[PrestazioneRef])
 def prestazioni_del_medico(medico_id: int, db: Session = Depends(get_db),
                            _=Depends(get_current_user)):
-    """Prestazioni erogabili dal medico selezionato (richiede autenticazione).
+    """Prestazioni erogabili dal medico selezionato.
 
-    Usato dal front-end per popolare la tendina delle prestazioni in base al
-    medico scelto (relazione medico-prestazione)."""
+    Usata dal front-end per popolare la tendina in base al medico scelto."""
     repo = MedicoRepository(db)
     if repo.get(medico_id) is None:
         raise HTTPException(status_code=404, detail="Medico inesistente")

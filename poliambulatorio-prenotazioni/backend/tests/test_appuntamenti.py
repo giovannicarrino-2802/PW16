@@ -1,3 +1,5 @@
+"""Test del flusso di prenotazione del paziente: login, prestazioni del
+medico, creazione della prenotazione e conflitto sullo slot occupato."""
 from fastapi.testclient import TestClient
 from app.main import app
 

@@ -1,9 +1,4 @@
-"""Registrazione dei modelli ORM nel metadata di SQLAlchemy.
-
-Importare questo package (o i singoli moduli) garantisce che tutte le
-tabelle siano note a `Base.metadata` prima della configurazione dei mapper
-e della `create_all`.
-"""
+"""Registra tutti i modelli ORM in `Base.metadata` prima di `create_all`."""
 from app.models.utente import Utente
 from app.models.paziente import Paziente
 from app.models.medico import Medico

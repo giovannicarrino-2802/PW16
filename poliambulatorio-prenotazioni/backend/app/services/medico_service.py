@@ -1,4 +1,4 @@
-from app.services.exceptions import NotFoundError, ConflictError, ValidationError
+from app.services.exceptions import NotFoundError, ConflictError
 
 
 class MedicoService:

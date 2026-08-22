@@ -16,9 +16,7 @@ class AppuntamentoRepository:
         return self.db.query(Disponibilita).filter(Disponibilita.id == disponibilita_id).first()
 
     def slot_liberi(self, medico_id):
-        # Gli orari degli slot sono datetime "naive" espressi nell'ora locale
-        # dell'ambulatorio (sia quelli del seed sia quelli generati dall'area
-        # amministrativa): il confronto usa quindi datetime.now() e non utcnow().
+        # Gli slot sono in ora locale: il confronto usa now(), non utcnow().
         now = datetime.now()
         return (self.db.query(Disponibilita)
                 .filter(Disponibilita.medico_id == medico_id,
@@ -43,7 +41,7 @@ class AppuntamentoRepository:
         app = Appuntamento(paziente_id=paziente_id, medico_id=slot.medico_id,
                            prestazione_id=prestazione_id, disponibilita_id=slot.id,
                            inizio=slot.inizio, fine=slot.fine, stato="prenotata")
-        slot.occupato = True
+        slot.occupato = True   # stessa transazione dell'INSERT
         self.db.add(app)
         self.db.commit()
         self.db.refresh(app)

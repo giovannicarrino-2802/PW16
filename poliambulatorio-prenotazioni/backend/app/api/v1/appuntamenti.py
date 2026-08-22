@@ -9,13 +9,10 @@ from app.services.audit_service import AuditService
 from app.schemas.appuntamento import (AppuntamentoCreate, AppuntamentoOut,
                                       AppuntamentoUpdate, AppuntamentoPerPaziente,
                                       AppuntamentoAdminUpdate, AppuntamentoDettaglioOut)
-from app.models.appuntamento import Appuntamento
 
 router = APIRouter()
 
-# Le eccezioni di dominio sollevate dai servizi (NotFound/Forbidden/Conflict/
-# Validation) sono tradotte in risposte HTTP dagli exception handler registrati
-# in `main.py`: i router non le intercettano.
+# Le eccezioni di dominio sono tradotte in HTTP dagli handler in main.py.
 
 
 def _service(db: Session) -> AppuntamentoService:

@@ -3,11 +3,7 @@ from app.db.base import Base
 
 
 class MedicoPrestazione(Base):
-    """Tabella di associazione molti-a-molti tra Medico e Prestazione.
-
-    Un medico puo' eseguire piu' prestazioni e una prestazione puo' essere
-    eseguita da piu' medici. La coppia (medico_id, prestazione_id) e' unica.
-    """
+    """Associazione molti-a-molti Medico-Prestazione; la coppia e' unica."""
     __tablename__ = "medico_prestazione"
 
     id = Column(Integer, primary_key=True)

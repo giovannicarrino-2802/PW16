@@ -29,6 +29,8 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
             raise cred_exc
     except JWTError:
         raise cred_exc
+    # Il ruolo si rilegge dal DB e non dal claim del token: una revoca ha
+    # effetto immediato anziche' alla scadenza.
     user = db.query(Utente).filter(Utente.id == int(user_id)).first()
     if user is None:
         raise cred_exc
@@ -43,7 +45,6 @@ def require_role(*ruoli):
     return checker
 
 
-# Dipendenza di comodo per gli endpoint riservati all'amministratore (RBAC).
 require_admin = require_role("admin")
 
 

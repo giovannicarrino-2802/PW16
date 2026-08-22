@@ -10,7 +10,6 @@ class Prestazione(Base):
     durata_min = Column(Integer, nullable=False)
     prezzo = Column(Float, nullable=False)
 
-    # Relazione molti-a-molti con Medico tramite medico_prestazione
     medici = relationship(
         "Medico",
         secondary="medico_prestazione",

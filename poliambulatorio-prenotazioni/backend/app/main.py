@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.base import Base
 from app.db.session import engine
-# Import dei modelli per la registrazione nel metadata di SQLAlchemy
+# Import necessario a registrare i modelli in Base.metadata
 from app.models import (utente, paziente, medico, prestazione, medico_prestazione,
                         disponibilita, appuntamento, audit_log)  # noqa: F401
 from app.db import seed
@@ -16,15 +16,14 @@ from app.services.exceptions import (NotFoundError, ForbiddenError,
                                      ConflictError, ValidationError)
 
 Base.metadata.create_all(bind=engine)
-seed.run()
+seed.run()   # dati di esempio, idempotente
 
 app = FastAPI(title="Poliambulatorio API", version="1.0.0",
               description="Sistema gestionale per poliambulatorio: prenotazioni, "
                           "gestione medici/prestazioni/disponibilita e area "
                           "amministrativa (RBAC) - Project Work PW16")
 
-# Il front-end si autentica con header Authorization (token in localStorage) e
-# non usa cookie: le credenziali cross-origin non servono e vengono disabilitate.
+# Auth via header Bearer, non cookie: credenziali cross-origin non necessarie.
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=False,
                    allow_methods=["*"], allow_headers=["*"])
 

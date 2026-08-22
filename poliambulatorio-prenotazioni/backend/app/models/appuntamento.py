@@ -12,5 +12,5 @@ class Appuntamento(Base):
     inizio = Column(DateTime, nullable=False)
     fine = Column(DateTime, nullable=False)
     stato = Column(String, nullable=False, default="prenotata")
-    # Ora locale dell'ambulatorio, come tutti i datetime persistiti.
+    # ora locale (cfr. docs/NOTE.md)
     creato_il = Column(DateTime, default=datetime.now)
