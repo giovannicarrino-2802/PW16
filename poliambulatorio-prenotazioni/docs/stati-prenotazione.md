@@ -7,14 +7,14 @@ stateDiagram-v2
     direction LR
     [*] --> prenotata : creazione<br/>(paziente o segreteria)
 
-    prenotata --> prenotata : riprogrammazione<br/>(nuovo slot)
     prenotata --> annullata : annullamento<br/>(paziente o segreteria)
     prenotata --> completata : visita erogata<br/>(segreteria)
+    prenotata --> prenotata : riprogrammazione<br/>(nuovo slot)
 
     annullata --> [*]
     completata --> [*]
 
-    note right of prenotata
+    note left of prenotata
         Unico stato attivo.
         Lo slot collegato risulta occupato.
     end note
