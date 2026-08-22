@@ -23,7 +23,7 @@ app = FastAPI(title="API Piattaforma di prenotazione di visite specialistiche", 
                           "un’organizzazione del settore sanitario" \
                           "Applicativo gestionale per poliambulatorio: prenotazioni, "
                           "gestione medici/prestazioni/disponibilita e area "
-                          "amministrativa - ")
+                          "amministrativa.")
 
 # Auth via header Bearer, non cookie: credenziali cross-origin non necessarie.
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=False,
