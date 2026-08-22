@@ -1,6 +1,6 @@
 # Documentazione di progetto
 
-La cartella [`docs/`] raccoglie gli artefatti di design del PW16.
+La cartella C`docs/`) raccoglie gli artefatti di design del PW16.
 
 ## Diagrammi
 Tutti in Mermaid, renderizzati direttamente da GitHub.
