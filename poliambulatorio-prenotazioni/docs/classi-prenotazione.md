@@ -1,4 +1,4 @@
-# Struttura a livelli - fetta verticale della prenotazione
+# Classi coinvolte nel flusso di prenotazione
 
 Classi coinvolte nel caso d'uso "Prenota visita", dal router al database.
 Mostra come il pattern architetturale si concretizza su una singola
