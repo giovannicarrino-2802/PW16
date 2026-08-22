@@ -37,24 +37,26 @@ flowchart LR
         UC18(["Gestire gli utenti"])
     end
 
-    PAZ --- UC1
-    PAZ --- UC2
-    PAZ --- UC3
-    PAZ --- UC4
-    PAZ --- UC5
-    PAZ --- UC6
-    PAZ --- UC7
+    UC1 --- PAZ
+    UC2 --- PAZ
+    UC3 --- PAZ
+    UC4 --- PAZ
+    UC5 --- PAZ
+    UC6 --- PAZ
+    UC7 --- PAZ
 
-    OPE --- UC2
-    OPE --- UC3
-    OPE --- UC4
+    UC2 --- OPE
+    UC3 --- OPE
+    UC4 --- OPE
+
     OPE --- UC8
     OPE --- UC9
     OPE --- UC10
     OPE --- UC11
     OPE --- UC12
 
-    ADM --- AREA_OPE
+    AREA_OPE --- ADM
+    
     ADM --- UC13
     ADM --- UC14
     ADM --- UC15
