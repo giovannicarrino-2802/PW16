@@ -19,7 +19,7 @@ Base.metadata.create_all(bind=engine)
 seed.run()   # dati di esempio, idempotente
 
 app = FastAPI(title="Piattaforma di prenotazione di visite specialistiche - API", version="1.0.0",
-              description="Project Work PW16 - Sviluppo di una applicazione full-stack API-based per"
+              description="Project Work PW16 - Sviluppo di una applicazione full-stack API-based per "
                           "un’organizzazione del settore sanitario.<br>"
                           "Applicativo gestionale per poliambulatorio: prenotazioni, "
                           "gestione medici/prestazioni/disponibilita e area "
