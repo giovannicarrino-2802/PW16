@@ -11,7 +11,6 @@ flowchart LR
     ADM(["Admin"])
 
     subgraph AREA_PAZ["Area paziente"]
-        UC1(["Registrarsi"])
         UC2(["Autenticarsi"])
         UC3(["Consultare medici<br/>e prestazioni"])
         UC4(["Consultare slot liberi"])
@@ -37,7 +36,6 @@ flowchart LR
         UC18(["Gestire gli utenti"])
     end
 
-    UC1 --- PAZ
     UC2 --- PAZ
     UC3 --- PAZ
     UC4 --- PAZ
@@ -67,6 +65,7 @@ flowchart LR
 
 ## Note sui casi d'uso
 
+- **Non è prevista la registrazione**: gli account sono creati dall'amministratore tramite la funzione di gestione utenti. Il paziente riceve le credenziali dalla struttura.
 - **Prenotare una visita** e **Consultare le proprie prenotazioni** sono
   riservati al ruolo `paziente`: un account di segreteria non ha un profilo
   paziente collegato e riceve `403`. La segreteria opera invece tramite

@@ -22,7 +22,7 @@ La documentazione OpenAPI/Swagger e' generata automaticamente da FastAPI:
 avvia il back-end e apri http://localhost:8000/docs (oppure /openapi.json).
 
 ## Mappa requisito -> endpoint -> test
-- RF1 registrazione/login -> `/auth/register`, `/auth/login`, `/auth/me` -> `test_login_demo`, `test_me_ritorna_ruolo`
+- RF1 autenticazione -> `/auth/login`, `/auth/me` -> `test_login_demo`, `test_me_ritorna_ruolo`
 - RF2 ricerca disponibilita -> `/medici/{id}/disponibilita` -> `test_prenota_e_lista` (copertura indiretta)
 - RF3 prestazioni per medico -> `/medici/{id}/prestazioni` -> `test_prestazioni_del_medico`
 - RF4 prenotazione (validata) -> `POST /appuntamenti` -> `test_prenota_e_lista`, `test_slot_occupato_genera_conflitto`, `test_prenotazione_non_valida_bloccata`
@@ -53,7 +53,6 @@ Legenda: **X** consentito - **-** negato (`403`) - **n/a** non applicabile al ru
 
 | Endpoint | Metodo | paziente | operatore | admin | Dipendenza |
 |---|---|:--:|:--:|:--:|---|
-| `/auth/register` | POST | X | X | X | nessuna (pubblico) |
 | `/auth/login` | POST | X | X | X | nessuna (pubblico) |
 | `/auth/me` | GET | X | X | X | `get_current_user` |
 | `/medici` | GET | X | X | X | `get_current_user` |

@@ -144,7 +144,6 @@ back-end avviato).
 ### Pubbliche / paziente / operatore
 | Metodo | Endpoint | Ruolo | Descrizione |
 |--------|----------|-------|-------------|
-| POST | `/api/v1/auth/register` | pubblico | Registrazione paziente |
 | POST | `/api/v1/auth/login` | pubblico | Login (JWT) |
 | GET  | `/api/v1/auth/me` | autenticato | Utente corrente (ruolo) |
 | GET  | `/api/v1/medici` | autenticato | Elenco medici |
