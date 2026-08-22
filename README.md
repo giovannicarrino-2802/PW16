@@ -2,7 +2,7 @@
 
 Project Work PW16 - CdS Informatica per le Aziende Digitali (L-31).
 
-Applicazione full-stack API-based per un'organizzazione del settore sanitario allo scopo di supportare il processo organizzativo per la prenotazione di visite specialistiche, la gestione di medici, prestazioni, disponibilita', associazioni medico-prestazione e utenti.
+Applicazione full-stack API-based per un'organizzazione del settore sanitario allo scopo di supportare il processo organizzativo per la prenotazione di visite specialistiche, la gestione di medici, prestazioni, disponibilità, associazioni medico-prestazione e utenti.
 
 Il codice sorgente si trova nella cartella
 [`poliambulatorio-prenotazioni/`](poliambulatorio-prenotazioni/); questo file
@@ -17,18 +17,18 @@ Front-end (HTML/CSS/JS)  ->  API REST (FastAPI)  ->  Servizi (business)
 
 Trasversale: sicurezza (JWT + RBAC), validazione (Pydantic), audit log.
 
-Il livello **Servizi** applica le regole di business (es. una prestazione puo'
+Il livello **Servizi** applica le regole di business (es. una prestazione può
 essere prenotata solo se associata al medico); il livello **Repository** isola
 l'accesso ai dati; le **API** traducono le eccezioni di dominio in codici HTTP.
 
-## Funzionalita' principali
+## Funzionalità principali
 
-Ogni ruolo dispone di endpoint propri, cosi' che l'audit log registri sempre chi
+Ogni ruolo dispone di endpoint propri, così che l'audit log registri sempre chi
 ha compiuto l'operazione e per conto di chi.
 
 **Paziente** — sceglie il medico e vede le sole prestazioni che quel medico
 eroga; seleziona lo slot su un calendario settimanale scorrevole con le
-disponibilita libere e future. Puo' prenotare, consultare le proprie
+disponibilità libere e future. Può prenotare, consultare le proprie
 prenotazioni e annullarle.
 
 **Operatore di segreteria** — lavora sull'agenda completa della struttura:
@@ -41,7 +41,7 @@ agende e gestione utenti.
 
 ### Regole applicate lato server
 
-Il front-end non applica vincoli: ogni regola e' verificata dai servizi e
+Il front-end non applica vincoli: ogni regola è verificata dai servizi e
 tradotta in codice HTTP da un punto unico (`main.py`).
 
 | Regola | Violazione |
@@ -49,7 +49,7 @@ tradotta in codice HTTP da un punto unico (`main.py`).
 | La prestazione deve essere erogata dal medico scelto | `400` |
 | Lo slot deve essere libero | `409` |
 | `annullata` e `completata` sono stati terminali | `409` |
-| La riprogrammazione avviene su uno slot dello stesso medico | `400` |
+| La riprogrammazione avviene su uno slot dello stesso medico | `409` |
 | L'operazione deve essere consentita al ruolo | `403` |
 
 Struttura interna e flussi nei diagrammi in
@@ -68,7 +68,7 @@ PW16/
     │   │   ├── api/                 <- livello API (router REST, incl. admin/)
     │   │   ├── services/            <- regole di business (+ exceptions.py)
     │   │   ├── repositories/        <- accesso ai dati
-    │   │   ├── models/              <- entita ORM (SQLAlchemy)
+    │   │   ├── models/              <- entità ORM (SQLAlchemy)
     │   │   ├── schemas/             <- DTO (Pydantic)
     │   │   ├── core/                <- configurazione e sicurezza (JWT, hashing)
     │   │   └── db/                  <- base, sessione, seed
@@ -86,13 +86,13 @@ PW16/
 >  in locale.
 >- **Circa 300 MB liberi** su disco: l'ambiente virtuale con le dipendenze ne
 >  occupa circa 250, il database SQLite pochi MB.
->- **Windows: policy di esecuzione.** L'attivazione del venv da PowerShell puo'
+>- **Windows: policy di esecuzione.** L'attivazione del venv da PowerShell può
 >  essere bloccata dalla policy predefinita. In quel caso eseguire, nella stessa
 >  sessione:
 >```powershell
 >  Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
 >```
->  L'effetto e' limitato alla finestra corrente e non modifica le impostazioni
+>  L'effetto è limitato alla finestra corrente e non modifica le impostazioni
 >  del sistema.
 
 ### Windows (PowerShell)
@@ -137,7 +137,7 @@ back-end avviato).
 - **Amministrazione** (solo `admin`): CRUD Medici, CRUD Prestazioni, gestione
   Associazioni medico-prestazione, Gestione Utenti (crea/modifica/elimina
   utenti con ruolo e password; creando un utente *paziente* si registra anche il
-  profilo con nome/cognome/codice fiscale), e Disponibilita con flusso a 3 passi:
+  profilo con nome/cognome/codice fiscale), e Disponibilità con flusso a 3 passi:
   (1) Seleziona il medico, (2) genera slot ricorrenti indicando periodo, giorni della
   settimana, fascia oraria e durata, (3) rivedi gli slot su un calendario
   settimanale.
@@ -145,9 +145,9 @@ back-end avviato).
   prenotazioni con nome paziente/medico/prestazione, filtro per stato e azioni
   Riprogramma / Completa / Annulla su qualsiasi appuntamento. La
   riprogrammazione propone gli altri slot liberi dello stesso medico.
-- **Prenota per conto** (segreteria `operatore` e `admin`): nella scheda *Prenota*, la segreteria seleziona il paziente in cima e poi prenota normalmente scegliendo medico,prestazione e slot.
+- **Prenota per conto** (segreteria `operatore` e `admin`): nella scheda *Prenota*, la segreteria seleziona il paziente in cima e poi prenota normalmente scegliendo medico, prestazione e slot.
 
-> Nota sui ruoli: prenotare per se stessi e "Le mie prenotazioni" sono per gli
+> Nota sui ruoli: prenotare per sé stessi e "Le mie prenotazioni" sono per gli
 > account **paziente** (es. `mario.rossi@example.com`); la **segreteria**
 > (`operatore`) prenota *per conto* dei pazienti e gestisce l'agenda di tutti.
 > L'endpoint `/appuntamenti` (prenotazione personale) risponde `403` a un account
@@ -189,7 +189,7 @@ back-end avviato).
 | PUT/DELETE | `/api/v1/admin/utenti/{id}` | Modifica (incl. password) / eliminazione |
 
 Tutte le operazioni di scrittura amministrative e di segreteria sono tracciate
-nell'`AuditLog`. L'elenco completo delle azioni registrate e' in
+nell'`AuditLog`. L'elenco completo delle azioni registrate è in
 [`docs/NOTE.md`](poliambulatorio-prenotazioni/docs/NOTE.md).
 
 ## Test
@@ -200,9 +200,9 @@ pytest
 ```
 
 I test (cartella `backend/tests/`) usano un database SQLite dedicato
-(`conftest.py`) e coprono: CRUD medici/prestazioni/disponibilita, associazioni
+(`conftest.py`) e coprono: CRUD medici/prestazioni/disponibilità, associazioni
 medico-prestazione, blocco delle prenotazioni non valide, autorizzazioni RBAC,
-titolarita delle prenotazioni, stati terminali e vincoli sugli slot, gestione
+titolarità delle prenotazioni, stati terminali e vincoli sugli slot, gestione
 utenti e audit log. Vanno eseguiti sull'intera cartella.
 
 ## Documentazione di progetto
@@ -215,8 +215,8 @@ direttamente.
 |---|---|
 | [`NOTE.md`](poliambulatorio-prenotazioni/docs/NOTE.md) | Punto di ingresso: mappa requisiti-endpoint-test, matrice dei permessi, ciclo di vita della prenotazione, limiti noti |
 | [`casi-uso.md`](poliambulatorio-prenotazioni/docs/casi-uso.md) | Attori e casi d'uso |
-| [`architettura.md`](poliambulatorio-prenotazioni/docs/architettura.md) | Architettura a livelli e responsabilita |
-| [`ER.md`](poliambulatorio-prenotazioni/docs/ER.md) | Modello dati: entita, relazioni e vincoli |
+| [`architettura.md`](poliambulatorio-prenotazioni/docs/architettura.md) | Architettura a livelli e responsabilità |
+| [`ER.md`](poliambulatorio-prenotazioni/docs/ER.md) | Modello dati: entità, relazioni e vincoli |
 | [`classi-prenotazione.md`](poliambulatorio-prenotazioni/docs/classi-prenotazione.md) | Classi coinvolte nel flusso di prenotazione, dal router al database |
 | [`sequenza-prenotazione.md`](poliambulatorio-prenotazioni/docs/sequenza-prenotazione.md) | Flusso completo della prenotazione |
 | [`stati-prenotazione.md`](poliambulatorio-prenotazioni/docs/stati-prenotazione.md) | Ciclo di vita di un appuntamento |
