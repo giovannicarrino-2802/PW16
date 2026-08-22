@@ -28,7 +28,7 @@ avvia il back-end e apri http://localhost:8000/docs (oppure /openapi.json).
 - RF4 prenotazione (validata) -> `POST /appuntamenti` -> `test_prenota_e_lista`, `test_slot_occupato_genera_conflitto`, `test_prenotazione_non_valida_bloccata`
 - RF5 le mie prenotazioni / annulla -> `GET /appuntamenti`, `PATCH /appuntamenti/{id}`
 - RF5b titolarita della prenotazione -> `PATCH /appuntamenti/{id}` -> `test_paziente_non_annulla_prenotazione_altrui`
-- RF6 agenda operatore -> `GET /appuntamenti/tutti`, `GET /appuntamenti/admin/tutti`
+- RF6 agenda operatore -> `GET /appuntamenti/tutti`
 - RF7 gestione medici (admin) -> `/admin/medici` -> `test_crud_medico`, `test_rbac_*`
 - RF8 gestione prestazioni (admin) -> `/admin/prestazioni` -> `test_crud_prestazione`, `test_prestazione_validazione`
 - RF9 gestione disponibilita (admin) -> `/admin/disponibilita` -> `test_crud_disponibilita`, `test_disponibilita_intervallo_non_valido`
@@ -64,7 +64,6 @@ Legenda: **X** consentito - **-** negato (`403`) - **n/a** non applicabile al ru
 | `/appuntamenti` | GET | X | n/a | n/a | `get_current_paziente` |
 | `/appuntamenti/{id}` | PATCH | X | n/a | n/a | `get_current_paziente` |
 | `/appuntamenti/tutti` | GET | - | X | X | `require_role("operatore","admin")` |
-| `/appuntamenti/admin/tutti` | GET | - | X | X | `require_role("operatore","admin")` |
 | `/appuntamenti/operatore` | POST | - | X | X | `require_role("operatore","admin")` |
 | `/appuntamenti/tutti/{id}` | PATCH | - | X | X | `require_role("operatore","admin")` |
 | `/pazienti` | GET | - | X | X | `require_role("operatore","admin")` |
