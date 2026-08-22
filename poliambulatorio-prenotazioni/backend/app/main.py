@@ -18,7 +18,7 @@ from app.services.exceptions import (NotFoundError, ForbiddenError,
 Base.metadata.create_all(bind=engine)
 seed.run()   # dati di esempio, idempotente
 
-app = FastAPI(title="API Piattaforma di prenotazione di visite specialistiche", version="1.0.0",
+app = FastAPI(title="Piattaforma di prenotazione di visite specialistiche - API", version="1.0.0",
               description="Project Work PW16 - Sviluppo di una applicazione full-stack API-based per"
                           "un’organizzazione del settore sanitario" \
                           "Applicativo gestionale per poliambulatorio: prenotazioni, "
