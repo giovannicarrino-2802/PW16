@@ -81,23 +81,19 @@ PW16/
 
 > Requisiti:
 >- **Python 3.10 o superiore** (`python --version` per verificare). Su Windows,
-> in fase di installazione, spunta *Add Python to PATH*.
+> in fase di installazione, spuntare *Add Python to PATH*.
 >- **Connessione a Internet** per il solo `pip install`; l'applicazione poi gira
 >  in locale.
 >- **Circa 300 MB liberi** su disco: l'ambiente virtuale con le dipendenze ne
 >  occupa circa 250, il database SQLite pochi MB.
 >- **Windows: policy di esecuzione.** L'attivazione del venv da PowerShell puo'
->  essere bloccata dalla policy predefinita. In quel caso esegui, nella stessa
+>  essere bloccata dalla policy predefinita. In quel caso eseguire, nella stessa
 >  sessione:
 >```powershell
 >  Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
 >```
 >  L'effetto e' limitato alla finestra corrente e non modifica le impostazioni
 >  del sistema.
->- **`requirements.txt` si trova nella radice del progetto**
->  (`poliambulatorio-prenotazioni/`), non in `backend/`: avviando dal folder
->  `backend/` il percorso e' `..\requirements.txt` su Windows,
->  `../requirements.txt` su macOS/Linux.
 
 ### Windows (PowerShell)
 
@@ -106,8 +102,6 @@ Assicurarsi che Python sia installato nel sistema.
 ```powershell
 cd poliambulatorio-prenotazioni\backend
 python -m venv .venv
-# Se l'attivazione e' bloccata da policy, eseguire prima:
-# Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
 .venv\Scripts\activate
 pip install -r ..\requirements.txt
 # ignorare eventuali messaggi di aggiornamento
