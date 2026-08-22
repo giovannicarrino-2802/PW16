@@ -10,7 +10,7 @@ Tutti in Mermaid, renderizzati direttamente da GitHub.
 | [`casi-uso.md`](casi-uso.md) | Attori (Paziente, Operatore, Admin) e casi d'uso |
 | [`architettura.md`](architettura.md) | Architettura a livelli e responsabilita |
 | [`ER.md`](ER.md) | Modello dati: entita, relazioni e vincoli |
-| [`classi-prenotazione.md`](classi-prenotazione.md) | Classi della fetta verticale "Prenota visita" |
+| [`classi-prenotazione.md`](classi-prenotazione.md) | Classi coinvolte nel flusso di prenotazione |
 | [`sequenza-prenotazione.md`](sequenza-prenotazione.md) | Flusso completo della prenotazione |
 | [`stati-prenotazione.md`](stati-prenotazione.md) | Ciclo di vita di un appuntamento |
 
