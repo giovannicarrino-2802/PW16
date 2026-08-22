@@ -127,28 +127,25 @@ uvicorn app.main:app --reload
 - Admin:   admin@example.com        /  Admin123!
 
 ## Front-end
-Apri `poliambulatorio-prenotazioni/frontend/index.html` nel browser (con il
+Aprire `poliambulatorio-prenotazioni/frontend/index.html` nel browser (con il
 back-end avviato).
 
-- **Prenota una visita**: scegli il medico -> la tendina delle prestazioni si
-  popola con le sole prestazioni erogate da quel medico -> seleziona uno slot
-  sul calendario settimanale (scorri le settimane con le frecce) -> conferma.
+- **Prenota una visita**: scegliere il medico -> la tendina delle prestazioni si
+  popola con le sole prestazioni erogate da quel medico -> selezionare uno slot
+  sul calendario settimanale (scorrere le settimane con le frecce) -> conferma prenotazione.
 - **Le mie prenotazioni**: elenco e annullamento.
 - **Amministrazione** (solo `admin`): CRUD Medici, CRUD Prestazioni, gestione
-  Associazioni medico-prestazione, **Gestione Utenti** (crea/modifica/elimina
+  Associazioni medico-prestazione, Gestione Utenti (crea/modifica/elimina
   utenti con ruolo e password; creando un utente *paziente* si registra anche il
-  profilo con nome/cognome/codice fiscale), e **Disponibilita** con flusso a 3 passi:
-  (1) scegli il medico, (2) genera slot ricorrenti indicando periodo, giorni della
+  profilo con nome/cognome/codice fiscale), e Disponibilita con flusso a 3 passi:
+  (1) Seleziona il medico, (2) genera slot ricorrenti indicando periodo, giorni della
   settimana, fascia oraria e durata, (3) rivedi gli slot su un calendario
-  settimanale ed eliminane singolarmente quelli non voluti (gli slot gia prenotati
-  non sono eliminabili).
+  settimanale.
 - **Agenda** (segreteria `operatore` e `admin`): vista di **tutte** le
   prenotazioni con nome paziente/medico/prestazione, filtro per stato e azioni
-  **Riprogramma / Completa / Annulla** su qualsiasi appuntamento. La
+  Riprogramma / Completa / Annulla su qualsiasi appuntamento. La
   riprogrammazione propone gli altri slot liberi dello stesso medico.
-- **Prenota per conto** (segreteria): nella scheda *Prenota*, la segreteria
-  seleziona il paziente in cima e poi prenota normalmente scegliendo medico,
-  prestazione e slot.
+- **Prenota per conto** (segreteria `operatore` e `admin`): nella scheda *Prenota*, la segreteria seleziona il paziente in cima e poi prenota normalmente scegliendo medico,prestazione e slot.
 
 > Nota sui ruoli: prenotare per se stessi e "Le mie prenotazioni" sono per gli
 > account **paziente** (es. `mario.rossi@example.com`); la **segreteria**
@@ -164,18 +161,18 @@ back-end avviato).
 | POST | `/api/v1/auth/login` | pubblico | Login (JWT) |
 | GET  | `/api/v1/auth/me` | autenticato | Utente corrente (ruolo) |
 | GET  | `/api/v1/medici` | autenticato | Elenco medici |
-| GET  | `/api/v1/medici/{id}/prestazioni` | autenticato | **Prestazioni del medico** |
+| GET  | `/api/v1/medici/{id}/prestazioni` | autenticato | Prestazioni del medico |
 | GET  | `/api/v1/medici/{id}/disponibilita` | autenticato | Slot liberi |
 | GET  | `/api/v1/prestazioni` | autenticato | Catalogo prestazioni |
 | POST | `/api/v1/appuntamenti` | paziente | Prenota (valida medico-prestazione) |
 | GET  | `/api/v1/appuntamenti` | paziente | Le mie prenotazioni |
 | PATCH| `/api/v1/appuntamenti/{id}` | paziente | Annulla |
-| GET  | `/api/v1/appuntamenti/tutti` | operatore/admin | **Agenda completa** (paziente/medico/prestazione) |
-| POST | `/api/v1/appuntamenti/operatore` | operatore/admin | **Prenota per conto** di un paziente |
-| PATCH| `/api/v1/appuntamenti/tutti/{id}` | operatore/admin | **Modifica** (annulla / completa / riprogramma) |
+| GET  | `/api/v1/appuntamenti/tutti` | operatore/admin | Agenda completa (paziente/medico/prestazione) |
+| POST | `/api/v1/appuntamenti/operatore` | operatore/admin | Prenota per conto di un paziente |
+| PATCH| `/api/v1/appuntamenti/tutti/{id}` | operatore/admin | Modifica (annulla / completa / riprogramma) |
 | GET  | `/api/v1/pazienti` | operatore/admin | Elenco pazienti (per prenotare per conto) |
 
-### Amministrative (ruolo `admin`, RBAC)
+### Amministrative
 | Metodo | Endpoint | Descrizione |
 |--------|----------|-------------|
 | GET/POST | `/api/v1/admin/medici` | Elenco / creazione medico |
@@ -186,9 +183,9 @@ back-end avviato).
 | GET/POST | `/api/v1/admin/prestazioni` | Elenco / creazione prestazione |
 | PUT/DELETE | `/api/v1/admin/prestazioni/{id}` | Modifica / eliminazione |
 | GET/POST | `/api/v1/admin/disponibilita` | Elenco / creazione slot singolo |
-| POST | `/api/v1/admin/disponibilita/genera` | **Generazione ricorrente** di slot (periodo + giorni + orari + durata) |
+| POST | `/api/v1/admin/disponibilita/genera` | Generazione ricorrente di slot (periodo + giorni + orari + durata) |
 | PUT/DELETE | `/api/v1/admin/disponibilita/{id}` | Modifica / eliminazione |
-| GET/POST | `/api/v1/admin/utenti` | **Gestione utenti**: elenco / creazione (email, password, ruolo) |
+| GET/POST | `/api/v1/admin/utenti` | Gestione utenti: elenco / creazione (email, password, ruolo) |
 | PUT/DELETE | `/api/v1/admin/utenti/{id}` | Modifica (incl. password) / eliminazione |
 
 Tutte le operazioni di scrittura amministrative e di segreteria sono tracciate
@@ -210,15 +207,16 @@ utenti e audit log. Vanno eseguiti sull'intera cartella.
 
 ## Documentazione di progetto
 
-La cartella [`docs/`](poliambulatorio-prenotazioni/docs/) raccoglie i diagrammi
-in formato Mermaid, che GitHub renderizza direttamente.
+La cartella [`docs/`](poliambulatorio-prenotazioni/docs/) raccoglie la
+documentazione tecnica e i diagrammi in formato Mermaid, che GitHub renderizza
+direttamente.
 
 | Documento | Contenuto |
 |---|---|
-| [`NOTE.md`](poliambulatorio-prenotazioni/docs/NOTE.md) | Punto di ingresso: mappa requisiti-endpoint-test, matrice dei permessi, convenzioni, limiti noti |
+| [`NOTE.md`](poliambulatorio-prenotazioni/docs/NOTE.md) | Punto di ingresso: mappa requisiti-endpoint-test, matrice dei permessi, ciclo di vita della prenotazione, limiti noti |
 | [`casi-uso.md`](poliambulatorio-prenotazioni/docs/casi-uso.md) | Attori e casi d'uso |
 | [`architettura.md`](poliambulatorio-prenotazioni/docs/architettura.md) | Architettura a livelli e responsabilita |
 | [`ER.md`](poliambulatorio-prenotazioni/docs/ER.md) | Modello dati: entita, relazioni e vincoli |
-| [`classi-prenotazione.md`](poliambulatorio-prenotazioni/docs/classi-prenotazione.md) | Classi della fetta verticale "Prenota visita" |
+| [`classi-prenotazione.md`](poliambulatorio-prenotazioni/docs/classi-prenotazione.md) | Classi coinvolte nel flusso di prenotazione, dal router al database |
 | [`sequenza-prenotazione.md`](poliambulatorio-prenotazioni/docs/sequenza-prenotazione.md) | Flusso completo della prenotazione |
 | [`stati-prenotazione.md`](poliambulatorio-prenotazioni/docs/stati-prenotazione.md) | Ciclo di vita di un appuntamento |
