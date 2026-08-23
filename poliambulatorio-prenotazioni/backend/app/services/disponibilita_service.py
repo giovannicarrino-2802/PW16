@@ -36,6 +36,8 @@ class DisponibilitaService:
 
     def aggiorna(self, utente_id, disponibilita_id, dati):
         slot = self.dettaglio(disponibilita_id)
+        if slot.occupato:
+            raise ConflictError("Impossibile modificare uno slot gia prenotato")
         cambi = dati.model_dump(exclude_unset=True)
         medico_id = cambi.get("medico_id", slot.medico_id)
         inizio = cambi.get("inizio", slot.inizio)
