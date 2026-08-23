@@ -34,7 +34,7 @@ disponibile su http://localhost:8000/docs a back-end avviato.
 | RF11 | Audit | `AuditService` | `test_audit_registra_operazioni_admin` |
 | RF12 | Segreteria: prenota per conto, agenda, modifica | `/appuntamenti/operatore`, `/appuntamenti/tutti`, `PATCH /appuntamenti/tutti/{id}` | `test_segreteria_prenota_per_paziente_e_modifica` |
 | RF13 | Gestione utenti | `/admin/utenti` | `test_crud_utente_operatore`, `test_crea_utente_paziente_con_profilo`, `test_utenti_rbac_e_self_delete` |
-| RF14 | Stati terminali | `PATCH /appuntamenti/{id}`, `PATCH /appuntamenti/tutti/{id}` | `test_paziente_non_annulla_due_volte`, `test_segreteria_non_annulla_due_volte`, `test_riprogramma_solo_prenotazioni_attive`, `test_riprogramma_prenotazione_completata`, `test_riprogramma_solo_stesso_medico`, `test_riprogramma_su_slot_occupato` |
+| RF14 | Stati terminali | `PATCH /appuntamenti/{id}`, `PATCH /appuntamenti/tutti/{id}` | `test_paziente_non_annulla_due_volte`, `test_segreteria_non_annulla_due_volte`, `test_riprogramma_solo_prenotazioni_attive`, `test_riprogramma_prenotazione_completata`, `test_riprogramma_solo_stesso_medico`, `test_riprogramma_su_slot_occupato`, `test_completa_prenotazione_gia_completata` |
 | RF15 | Integrità degli slot | `DELETE /admin/disponibilita/{id}` | `test_elimina_slot_prenotato_bloccata` |
 
 ## Controllo degli accessi
@@ -94,7 +94,7 @@ sistema privo di amministratori.
 ## Ciclo di vita della prenotazione
 
 `prenotata` è l'unico stato attivo; `annullata` e `completata` sono **stati
-terminali** e non ammettono ulteriori transizioni (annullamento ripetuto o
+terminali** e non ammettono ulteriori transizioni (annullamento e completamento ripetuti o
 riprogrammazione rispondono `409`). Il vincolo esiste perchè solo una
 prenotazione attiva "possiede" il proprio slot: agire su una prenotazione già
 terminata libererebbe uno slot che nel frattempo può appartenere a un'altra
