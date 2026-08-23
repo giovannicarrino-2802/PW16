@@ -125,8 +125,12 @@ Costruttore: `__init__(db: Session)`.
 
 ## Note
 
-- Il router riceve e restituisce DTO Pydantic (`AppuntamentoCreate`, `AppuntamentoOut`); le entità SQLAlchemy non escono mai dal livello di accesso ai dati.
-- Il service invoca i metodi del repository ricevuto nel costruttore, quindi nei test è sostituibile con un doppio.
-- `_valida_slot_prestazione` è condiviso da
-  `prenota` e `prenota_per`, con regole identiche per paziente e segreteria.
-- `main.py` registra la traduzione in codici HTTP una volta sola essendoci una radice comune per tutte le eccezioni.
+- Il router riceve e restituisce DTO Pydantic (`AppuntamentoCreate`,
+  `AppuntamentoOut`); le entità SQLAlchemy non escono mai dal livello di
+  accesso ai dati.
+- Il service invoca i metodi del repository ricevuto nel costruttore, quindi
+  nei test è sostituibile con un doppio.
+- `_valida_slot_prestazione` è condiviso da `prenota` e `prenota_per`, con
+  regole identiche per paziente e segreteria.
+- Le eccezioni hanno una radice comune, quindi `main.py` registra la
+  traduzione in codici HTTP una volta sola.
