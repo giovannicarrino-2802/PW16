@@ -92,8 +92,6 @@ PW16/
 >```powershell
 >  Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
 >```
->  L'effetto è limitato alla finestra corrente e non modifica le impostazioni
->  del sistema.
 
 ### Windows (PowerShell)
 
