@@ -1,8 +1,7 @@
 # Classi coinvolte nel flusso di prenotazione
 
-Classi del caso d'uso «Prenota visita», dal router al database: come il pattern
-architetturale si concretizza su una singola funzionalità. Per la struttura
-delle tabelle si veda [`ER.md`](ER.md).
+Classi del caso d'uso «Prenota visita», dal router al database.<br>
+Per la struttura delle tabelle si veda [`ER.md`](ER.md).
 
 ```mermaid
 classDiagram
@@ -124,14 +123,10 @@ Costruttore: `__init__(db: Session)`.
 **`AuditService`** — `backend/app/services/audit_service.py`:
 `log(utente_id, azione, entita, entita_id=None, dettagli=None)`.
 
-## Elementi da osservare
+## Note
 
-- **Il router non conosce i modelli ORM**: riceve e restituisce DTO Pydantic
-  (`AppuntamentoCreate`, `AppuntamentoOut`); le entità SQLAlchemy non escono
-  mai dal livello di accesso ai dati.
-- **Il service non conosce SQLAlchemy**: invoca i metodi del repository
-  ricevuto nel costruttore, quindi nei test è sostituibile con un doppio.
-- **Un solo punto di validazione**: `_valida_slot_prestazione` è condiviso da
+- Il router riceve e restituisce DTO Pydantic (`AppuntamentoCreate`, `AppuntamentoOut`); le entità SQLAlchemy non escono mai dal livello di accesso ai dati.
+- Il service invoca i metodi del repository ricevuto nel costruttore, quindi nei test è sostituibile con un doppio.
+- `_valida_slot_prestazione` è condiviso da
   `prenota` e `prenota_per`, con regole identiche per paziente e segreteria.
-- **Radice comune delle eccezioni**: permette a `main.py` di registrare la
-  traduzione in codici HTTP una volta sola.
+- `main.py` registra la traduzione in codici HTTP una volta sola essendoci una radice comune per tutte le eccezioni.
