@@ -66,11 +66,11 @@ flowchart TB
 
 ## Principio guida
 
-Il front-end non applica vincoli e il repository non verifica le operazioni, ogni regola è verificata dal livello dei servizi.
+Il front-end non applica vincoli e il repository non verifica le operazioni, ogni regola è applicata dal livello dei servizi.
 
 La dipendenza è **unidirezionale**: nessun livello conosce quelli soprastanti.
 Le eccezioni di dominio sono l'unico canale di ritorno dal livello applicativo
 verso le API, e vengono tradotte in codici HTTP da un punto unico (`main.py`),
 evitando che i router replichino la stessa logica di conversione.
 
-Fanno eccezione le letture prive di regole di dominio (elenco medici, elenco prestazioni, slot liberi, elenco pazienti) che sono servite dal router direttamente tramite il repository, senza attraversare il livello dei servizi.
+Fanno eccezione le letture prive di regole di dominio (elenco medici, elenco prestazioni, slot liberi, elenco pazienti), servite dal router direttamente tramite il repository, senza attraversare il livello dei servizi.
