@@ -2,7 +2,6 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.deps import get_db, get_current_user
-from app.models.medico import Medico
 from app.repositories.appuntamento_repository import AppuntamentoRepository
 from app.repositories.medico_repository import MedicoRepository
 from app.schemas.medico import MedicoOut, SlotOut
@@ -13,7 +12,7 @@ router = APIRouter()
 
 @router.get("", response_model=List[MedicoOut])
 def lista_medici(db: Session = Depends(get_db), _=Depends(get_current_user)):
-    return db.query(Medico).all()
+    return MedicoRepository(db).list()
 
 
 @router.get("/{medico_id}/disponibilita", response_model=List[SlotOut])
