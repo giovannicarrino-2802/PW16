@@ -27,11 +27,12 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         user_id = payload.get("sub")
         if user_id is None:
             raise cred_exc
-    except JWTError:
+        user_id = int(user_id)
+    except (JWTError, ValueError):
         raise cred_exc
     # Il ruolo si rilegge dal DB e non dal claim del token: una revoca ha
     # effetto immediato anziche' alla scadenza.
-    user = db.query(Utente).filter(Utente.id == int(user_id)).first()
+    user = db.query(Utente).first()
     if user is None:
         raise cred_exc
     return user
