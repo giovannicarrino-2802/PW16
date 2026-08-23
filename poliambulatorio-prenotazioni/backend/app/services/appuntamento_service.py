@@ -100,7 +100,7 @@ class AppuntamentoService:
         if app.stato == "annullata":
             raise ConflictError("Una visita annullata non puo' essere completata")
         if app.stato == "completata":
-            raise ConflictError("La prenotazione e gia completata")
+            raise ConflictError("La prenotazione e' gia completata")
         app = self.repo.imposta_stato(app, "completata")
         self.audit.log(utente_id, "COMPLETE_APPUNTAMENTO", "appuntamento", app.id)
         return app
