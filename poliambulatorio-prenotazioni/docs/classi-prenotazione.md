@@ -1,10 +1,9 @@
 # Classi coinvolte nel flusso di prenotazione
 
-Classi coinvolte nel caso d'uso "Prenota visita", dal router al database.
-Mostra come il pattern architetturale si concretizza su una singola
-funzionalita; per la struttura delle tabelle si veda [`ER.md`](ER.md).
+Classi del caso d'uso «Prenota visita», dal router al database: come il pattern
+architetturale si concretizza su una singola funzionalità. Per la struttura
+delle tabelle si veda [`ER.md`](ER.md).
 
-**Vista d'insieme: relazioni tra i componenti**
 ```mermaid
 classDiagram
     direction TB
@@ -65,150 +64,74 @@ classDiagram
     ServiceError <|-- ConflictError
     ServiceError <|-- ValidationError
 
-    AppuntamentoRepository --> Appuntamento : gestisce
-    AppuntamentoRepository --> Disponibilita : gestisce
-    AppuntamentoRepository ..> MedicoPrestazione : interroga
-```
-
-**Vista completa: include attributi e firme dei metodi**
-```mermaid
-classDiagram
-    direction TB
-
-    class RouterAppuntamenti {
-        <<API>>
-        +prenota(data, paziente, db) AppuntamentoOut
-        +le_mie(paziente, db) List~AppuntamentoOut~
-        +annulla(app_id, data, paziente, db) AppuntamentoOut
-        +agenda_completa(db, utente) List~AppuntamentoDettaglioOut~
-        +prenota_per_paziente(data, db, operatore) AppuntamentoOut
-        +modifica_qualsiasi(app_id, data, db, operatore) AppuntamentoOut
-    }
-
-    class AppuntamentoService {
-        <<Servizio>>
-        -repo: AppuntamentoRepository
-        -audit: AuditService
-        -_valida_slot_prestazione(disponibilita_id, prestazione_id) Disponibilita
-        +prenota(paziente_id, utente_id, disponibilita_id, prestazione_id)
-        +prenota_per(operatore_id, paziente_id, disponibilita_id, prestazione_id)
-        +le_mie(paziente_id)
-        +tutti_dettaglio()
-        +annulla(utente_id, paziente_id, app_id)
-        +annulla_qualsiasi(utente_id, app_id)
-        +completa(utente_id, app_id)
-        +riprogramma(utente_id, app_id, nuovo_slot_id)
-    }
-
-    class AppuntamentoRepository {
-        <<Repository>>
-        -db: Session
-        +slot(disponibilita_id) Disponibilita
-        +slot_liberi(medico_id) List~Disponibilita~
-        +prestazione(prestazione_id) Prestazione
-        +paziente(paziente_id) Paziente
-        +medico_esegue(medico_id, prestazione_id) bool
-        +crea(paziente_id, slot, prestazione_id) Appuntamento
-        +list_by_paziente(paziente_id) List~Appuntamento~
-        +list_tutti_dettaglio() List~tuple~
-        +annulla(app) Appuntamento
-        +imposta_stato(app, stato) Appuntamento
-        +riprogramma(app, nuovo_slot) Appuntamento
-    }
-
-    class AuditService {
-        <<Servizio>>
-        -db: Session
-        +log(utente_id, azione, entita, entita_id, dettagli)
-    }
-
-    class Appuntamento {
-        <<Modello ORM>>
-        +int id
-        +int paziente_id
-        +int medico_id
-        +int prestazione_id
-        +int disponibilita_id
-        +datetime inizio
-        +datetime fine
-        +str stato
-        +datetime creato_il
-    }
-
-    class Disponibilita {
-        <<Modello ORM>>
-        +int id
-        +int medico_id
-        +datetime inizio
-        +datetime fine
-        +bool occupato
-    }
-
-    class MedicoPrestazione {
-        <<Modello ORM>>
-        +int id
-        +int medico_id
-        +int prestazione_id
-    }
-
-    class AppuntamentoCreate {
-        <<DTO Pydantic>>
-        +int disponibilita_id
-        +int prestazione_id
-    }
-
-    class AppuntamentoOut {
-        <<DTO Pydantic>>
-        +int id
-        +int medico_id
-        +int prestazione_id
-        +datetime inizio
-        +datetime fine
-        +str stato
-    }
-
-    class ServiceError {
-        <<Eccezione>>
-    }
-    class NotFoundError {
-        <<Eccezione>>
-    }
-    class ForbiddenError {
-        <<Eccezione>>
-    }
-    class ConflictError {
-        <<Eccezione>>
-    }
-    class ValidationError {
-        <<Eccezione>>
-    }
-
-    RouterAppuntamenti ..> AppuntamentoCreate : riceve
-    RouterAppuntamenti ..> AppuntamentoOut : restituisce
-    RouterAppuntamenti --> AppuntamentoService : delega
-    AppuntamentoService --> AppuntamentoRepository : usa
-    AppuntamentoService --> AuditService : traccia
-    AppuntamentoService ..> ServiceError : solleva
     AppuntamentoRepository ..> Appuntamento : gestisce
     AppuntamentoRepository ..> Disponibilita : gestisce
     AppuntamentoRepository ..> MedicoPrestazione : interroga
-
-    ServiceError <|-- NotFoundError
-    ServiceError <|-- ForbiddenError
-    ServiceError <|-- ConflictError
-    ServiceError <|-- ValidationError
 ```
+
+## Firme dei metodi
+
+Gli attributi dei DTO sono in `backend/app/schemas/appuntamento.py`, quelli dei
+modelli ORM in [`ER.md`](ER.md).
+
+**`RouterAppuntamenti`** — `backend/app/api/v1/appuntamenti.py`
+
+| Firma | Ruolo |
+|---|---|
+| `_service(db) -> AppuntamentoService` | Costruisce service e repository per la richiesta |
+| `prenota(data, paziente, db) -> AppuntamentoOut` | Il paziente prenota per sé |
+| `le_mie(paziente, db) -> List[AppuntamentoOut]` | Prenotazioni del paziente autenticato |
+| `annulla(app_id, data, paziente, db) -> AppuntamentoOut` | Annullamento da parte del paziente |
+| `agenda_completa(db, _) -> List[AppuntamentoDettaglioOut]` | Agenda di segreteria/admin |
+| `prenota_per_paziente(data, db, operatore) -> AppuntamentoOut` | La segreteria prenota per conto di un paziente |
+| `modifica_qualsiasi(app_id, data, db, operatore) -> AppuntamentoOut` | Riprogramma, annulla o completa |
+
+**`AppuntamentoService`** — `backend/app/services/appuntamento_service.py`
+
+Costruttore: `__init__(repo, audit)`.
+
+| Firma | Ruolo |
+|---|---|
+| `_valida_slot_prestazione(disponibilita_id, prestazione_id)` | Controlli comuni; ritorna lo slot valido |
+| `prenota(paziente_id, utente_id, disponibilita_id, prestazione_id)` | Crea la prenotazione |
+| `prenota_per(operatore_utente_id, paziente_id, disponibilita_id, prestazione_id)` | Come sopra, con verifica del paziente indicato |
+| `le_mie(paziente_id)` | Elenco per paziente |
+| `tutti_dettaglio()` | Agenda arricchita con i nomi |
+| `annulla(utente_id, paziente_id, app_id)` | Annulla verificando la proprietà |
+| `annulla_qualsiasi(utente_id, app_id)` | Annulla senza vincolo di proprietà |
+| `completa(utente_id, app_id)` | Porta la prenotazione a `completata` |
+| `riprogramma(utente_id, app_id, nuovo_slot_id)` | Sposta su altro slot dello stesso medico |
+
+**`AppuntamentoRepository`** — `backend/app/repositories/appuntamento_repository.py`
+
+Costruttore: `__init__(db: Session)`.
+
+| Firma | Ruolo |
+|---|---|
+| `slot(disponibilita_id) -> Disponibilita` | Slot per identificativo |
+| `slot_liberi(medico_id) -> List[Disponibilita]` | Slot non occupati e futuri |
+| `prestazione(prestazione_id) -> Prestazione` | Prestazione per identificativo |
+| `paziente(paziente_id) -> Paziente` | Paziente per identificativo |
+| `medico_esegue(medico_id, prestazione_id) -> bool` | Verifica l'associazione medico-prestazione |
+| `crea(paziente_id, slot, prestazione_id) -> Appuntamento` | Inserisce e occupa lo slot nella stessa transazione |
+| `get(app_id) -> Appuntamento` | Appuntamento per identificativo |
+| `list_by_paziente(paziente_id) -> List[Appuntamento]` | Prenotazioni di un paziente |
+| `list_tutti_dettaglio() -> List[tuple]` | Join con paziente, medico e prestazione |
+| `annulla(app) -> Appuntamento` | Stato `annullata` e slot liberato |
+| `imposta_stato(app, stato) -> Appuntamento` | Cambio di stato semplice |
+| `riprogramma(app, nuovo_slot) -> Appuntamento` | Libera il vecchio slot, occupa il nuovo |
+
+**`AuditService`** — `backend/app/services/audit_service.py`:
+`log(utente_id, azione, entita, entita_id=None, dettagli=None)`.
 
 ## Elementi da osservare
 
 - **Il router non conosce i modelli ORM**: riceve e restituisce DTO Pydantic
-  (`AppuntamentoCreate`, `AppuntamentoOut`), mentre le entita SQLAlchemy non
-  escono mai dal livello di accesso ai dati.
-- **Il service non conosce SQLAlchemy**: riceve un repository nel costruttore e
-  ne invoca i metodi, senza costruire query. Questo consente di sostituire il
-  repository con un doppio nei test unitari.
-- **Un solo punto di validazione**: `_valida_slot_prestazione` e' condiviso da
-  `prenota` e `prenota_per`, cosi' le regole valgono identiche sia che prenoti
-  il paziente sia che prenoti la segreteria.
-- **Le eccezioni derivano da una radice comune**, il che permette a `main.py` di
-  registrare la traduzione in codici HTTP una volta sola.
+  (`AppuntamentoCreate`, `AppuntamentoOut`); le entità SQLAlchemy non escono
+  mai dal livello di accesso ai dati.
+- **Il service non conosce SQLAlchemy**: invoca i metodi del repository
+  ricevuto nel costruttore, quindi nei test è sostituibile con un doppio.
+- **Un solo punto di validazione**: `_valida_slot_prestazione` è condiviso da
+  `prenota` e `prenota_per`, con regole identiche per paziente e segreteria.
+- **Radice comune delle eccezioni**: permette a `main.py` di registrare la
+  traduzione in codici HTTP una volta sola.
