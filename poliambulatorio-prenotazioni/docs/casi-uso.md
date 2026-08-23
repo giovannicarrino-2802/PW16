@@ -62,7 +62,7 @@ flowchart LR
     ADM --- UC18
 ```
 
-## Note sui casi d'uso
+## Note
 
 - Non è prevista la registrazione: gli account, pazienti compresi, sono
   creati dall'amministratore tramite *Gestire gli utenti*.
