@@ -23,7 +23,6 @@ class DisponibilitaUpdate(BaseModel):
     medico_id: Optional[int] = None
     inizio: Optional[datetime] = None
     fine: Optional[datetime] = None
-    occupato: Optional[bool] = None
 
 
 class DisponibilitaOut(BaseModel):
