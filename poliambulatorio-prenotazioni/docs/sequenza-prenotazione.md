@@ -1,7 +1,6 @@
 # Flusso "Prenota visita" - diagramma di sequenza
 
-Percorso completo del caso d'uso principale attraverso i livelli
-dell'architettura, dalla scelta del medico alla conferma della prenotazione.
+Il caso d'uso principale attraverso i livelli dell'architettura.
 
 ```mermaid
 sequenceDiagram
@@ -70,15 +69,13 @@ sequenceDiagram
 
 ## Note sul flusso
 
-- Il **router non contiene regole applicative**: si limita a invocare il service
-  e a restituire la risposta. Le eccezioni di dominio sollevate dal service sono
-  tradotte nei codici HTTP dagli exception handler registrati in `main.py`.
-- I tre rami di errore corrispondono ai controlli di
+- Il **router non contiene regole applicative**: invoca il service e restituisce
+  la risposta; le eccezioni di dominio diventano codici HTTP tramite gli
+  exception handler registrati in `main.py`.
+- I rami di errore sono i controlli di
   `AppuntamentoService._valida_slot_prestazione`, condivisi con la prenotazione
-  effettuata dalla segreteria (`POST /appuntamenti/operatore`).
-- La verifica `medico_esegue` interroga la tabella di associazione
-  `medico_prestazione`: e' la regola che impedisce di prenotare una prestazione
-  presso un medico che non la eroga.
-- L'occupazione dello slot e l'inserimento dell'appuntamento avvengono nella
-  stessa transazione del repository, evitando che uno slot risulti prenotato
-  senza un appuntamento corrispondente.
+  della segreteria (`POST /appuntamenti/operatore`). La verifica `medico_esegue`
+  interroga la tabella `medico_prestazione`: è la regola che impedisce di
+  prenotare una prestazione presso un medico che non la eroga.
+- `crea` inserisce l'appuntamento e occupa lo slot nella stessa transazione,
+  così nessuno slot risulta prenotato senza appuntamento corrispondente.
