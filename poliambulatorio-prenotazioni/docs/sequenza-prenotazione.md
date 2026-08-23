@@ -44,7 +44,7 @@ sequenceDiagram
     alt slot inesistente
         SVC-->>API: NotFoundError
         API-->>FE: 404
-    else slot gia occupato
+    else slot già occupato
         SVC-->>API: ConflictError
         API-->>FE: 409
     else prestazione non erogata dal medico
