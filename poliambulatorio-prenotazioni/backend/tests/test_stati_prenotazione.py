@@ -153,3 +153,18 @@ def test_riprogramma_solo_stesso_medico():
     r = client.patch(f"/api/v1/appuntamenti/tutti/{app_id}", headers=op,
                      json={"disponibilita_id": altro_slot})
     assert r.status_code == 409, r.text
+
+
+def test_completa_prenotazione_gia_completata():
+    _, pid, slots = _scenario("Odontoiatria", "Visita odontoiatrica", "2031-01-17", n_slot=1)
+    op = _operatore()
+    paziente_id = client.get("/api/v1/pazienti", headers=op).json()[0]["id"]
+    app_id = client.post("/api/v1/appuntamenti/operatore", headers=op,
+                         json={"paziente_id": paziente_id, "disponibilita_id": slots[0],
+                               "prestazione_id": pid}).json()["id"]
+
+    assert client.patch(f"/api/v1/appuntamenti/tutti/{app_id}", headers=op,
+                        json={"stato": "completata"}).status_code == 200
+    r = client.patch(f"/api/v1/appuntamenti/tutti/{app_id}", headers=op,
+                     json={"stato": "completata"})
+    assert r.status_code == 409, r.text
