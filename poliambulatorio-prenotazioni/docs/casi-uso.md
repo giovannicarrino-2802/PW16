@@ -70,7 +70,7 @@ flowchart LR
 - *Prenotare una visita* verifica sempre che la prestazione scelta sia associata
   al medico dello slot, altrimenti risponde `400`.
 - *Riprogrammare*, *Completare* e *Annullare qualsiasi prenotazione* agiscono
-  solo su prenotazioni attive (vedi [`stati-prenotazione.md`](stati-prenotazione.md)).
+  solo su prenotazioni attive (cfr. [`stati-prenotazione.md`](stati-prenotazione.md)).
 - *Generare slot ricorrenti* specializza *Gestire le disponibilità*: crea in
   blocco gli slot di un periodo, saltando quelli che si sovrapporrebbero a slot
   esistenti.
