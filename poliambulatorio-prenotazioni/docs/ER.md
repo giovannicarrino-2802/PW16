@@ -1,8 +1,6 @@
 # Modello dati - Diagramma ER
 
-Sistema gestionale Poliambulatorio. Le entità del dominio sono **Utente**,
-**Paziente**, **Medico**, **Prestazione**, **MedicoPrestazione** (tabella di
-associazione molti-a-molti), **Disponibilità**, **Appuntamento** e **AuditLog**.
+Le entità del dominio sono **Utente**, **Paziente**, **Medico**, **Prestazione**, **MedicoPrestazione** (tabella di associazione molti-a-molti), **Disponibilità**, **Appuntamento** e **AuditLog**.
 
 Gli attributi contrassegnati con `opz.` ammettono valore nullo; tutti gli altri
 sono `NOT NULL`.
@@ -94,20 +92,17 @@ log sopravvive alla cancellazione dell'utente (cfr. [`NOTE.md`](NOTE.md),
 - `UTENTE.email`, `PAZIENTE.codice_fiscale` e `PAZIENTE.utente_id` sono unici.
 - `MEDICO_PRESTAZIONE(medico_id, prestazione_id)` è unica
   (`uq_medico_prestazione`): la stessa coppia non può essere associata due volte.
-- Chiavi esterne dichiarate su tutte le associazioni. SQLite però non le applica
-  senza `PRAGMA foreign_keys=ON`, qui non impostato: sono quindi documentali
-  (cfr. [`NOTE.md`](NOTE.md), "Limiti noti").
+- Chiavi esterne dichiarate su tutte le associazioni. SQLite non le applica
+  senza `PRAGMA foreign_keys=ON`, qui non impostato (cfr. [`NOTE.md`](NOTE.md), "Limiti noti").
 
 ### Applicati dal livello di servizio
 
-Non essendo esprimibili in modo dichiarativo, sono verificati dai servizi a ogni
-operazione:
+Verificati dai servizi a ogni operazione:
 
 - Una prenotazione è valida solo se la coppia `(medico_id, prestazione_id)`
   esiste in `MEDICO_PRESTAZIONE`.
 - Uno slot con `occupato = true` non può essere prenotato di nuovo.
-- Le disponibilità di uno stesso medico non si sovrappongono (verificato dal
-  generatore ricorrente).
+- Le disponibilità di uno stesso medico non si sovrappongono.
 - Uno slot può avere più righe in `APPUNTAMENTO` ma **al più una in stato non
   terminale**: annullamento e riprogrammazione liberano lo slot lasciando lo
   storico, che resta collegato. Per il ciclo di vita si veda
