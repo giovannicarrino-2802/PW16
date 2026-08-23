@@ -1,8 +1,7 @@
 # Casi d'uso
 
-Attori del sistema e funzionalità accessibili. I privilegi sono
-cumulativi: l'**Operatore** aggiunge alle funzioni del paziente quelle di segreteria,
-l'**Admin** aggiunge le configurazioni di medici, prestazioni, agende e utenti.
+Attori del sistema e funzionalità accessibili.<br>
+I privilegi sono cumulativi: l'**Operatore** aggiunge alle funzioni del paziente quelle di segreteria, l'**Admin** aggiunge le configurazioni di medici, prestazioni, agende e utenti.
 
 ```mermaid
 flowchart LR
