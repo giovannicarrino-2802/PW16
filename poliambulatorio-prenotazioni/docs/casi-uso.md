@@ -1,8 +1,8 @@
 # Casi d'uso
 
-Attori del sistema e funzionalita accessibili a ciascuno. I ruoli sono
-cumulativi: l'**Operatore** dispone delle funzioni di segreteria, l'**Admin**
-di quelle di segreteria piu' la configurazione del poliambulatorio.
+Attori del sistema e funzionalità accessibili. I privilegi sono
+cumulativi: l'**Operatore** aggiunge alle funzioni del paziente quelle di segreteria,
+l'**Admin** aggiunge le configurazioni di medici, prestazioni, agende e utenti.
 
 ```mermaid
 flowchart LR
@@ -31,7 +31,7 @@ flowchart LR
         UC13(["Gestire i medici"])
         UC14(["Gestire le prestazioni"])
         UC15(["Associare prestazioni<br/>ai medici"])
-        UC16(["Gestire le disponibilita"])
+        UC16(["Gestire le disponibilità"])
         UC17(["Generare slot ricorrenti"])
         UC18(["Gestire gli utenti"])
     end
@@ -54,7 +54,7 @@ flowchart LR
     OPE --- UC12
 
     AREA_OPE --- ADM
-    
+
     ADM --- UC13
     ADM --- UC14
     ADM --- UC15
@@ -65,17 +65,13 @@ flowchart LR
 
 ## Note sui casi d'uso
 
-- **Non è prevista la registrazione**: gli account sono creati dall'amministratore tramite la funzione di gestione utenti. Il paziente riceve le credenziali dalla struttura.
-- **Prenotare una visita** e **Consultare le proprie prenotazioni** sono
-  riservati al ruolo `paziente`: un account di segreteria non ha un profilo
-  paziente collegato e riceve `403`. La segreteria opera invece tramite
-  *Prenotare per conto di un paziente*.
-- **Prenotare una visita** include sempre la verifica che la prestazione scelta
-  sia associata al medico dello slot: se l'associazione non esiste la richiesta
-  viene respinta con `400`.
-- **Riprogrammare**, **Completare** e **Annullare qualsiasi prenotazione** sono
-  ammessi solo su prenotazioni attive (vedi
-  [`stati-prenotazione.md`](stati-prenotazione.md)).
-- **Generare slot ricorrenti** e' una specializzazione di *Gestire le
-  disponibilita*: crea in blocco gli slot di un periodo saltando quelli che si
-  sovrapporrebbero a slot gia esistenti.
+- **Non è prevista la registrazione**: gli account, pazienti compresi, sono
+  creati dall'amministratore tramite *Gestire gli utenti*.
+- *Prenotare una visita* e *Consultare le proprie prenotazioni* richiedono un profilo paziente collegato, che un account di segreteria non possiede (`403`). La segreteria usa invece *Prenotare per conto di un paziente*.
+- *Prenotare una visita* verifica sempre che la prestazione scelta sia associata
+  al medico dello slot, altrimenti risponde `400`.
+- *Riprogrammare*, *Completare* e *Annullare* agiscono
+  solo su prenotazioni attive (vedi [`stati-prenotazione.md`](stati-prenotazione.md)).
+- *Generare slot ricorrenti* specializza *Gestire le disponibilità*: crea in
+  blocco gli slot di un periodo, saltando quelli che si sovrapporrebbero a slot
+  esistenti.
