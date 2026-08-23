@@ -64,7 +64,7 @@ flowchart LR
 
 ## Note sui casi d'uso
 
-- **Non è prevista la registrazione**: gli account, pazienti compresi, sono
+- Non è prevista la registrazione: gli account, pazienti compresi, sono
   creati dall'amministratore tramite *Gestire gli utenti*.
 - *Prenotare una visita* e *Consultare le proprie prenotazioni* richiedono un profilo paziente collegato, che un account di segreteria non possiede (`403`). La segreteria usa invece *Prenotare per conto di un paziente*.
 - *Prenotare una visita* verifica sempre che la prestazione scelta sia associata
