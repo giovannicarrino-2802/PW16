@@ -149,8 +149,12 @@ Non impediscono l'uso previsto del prototipo.
 
 - **Integrità referenziale non applicata dal database.** SQLite non verifica le
   foreign key se non viene attivato `PRAGMA foreign_keys=ON`, qui non impostato.
-  L'eliminazione di un medico o di una prestazione dall'area amministrativa non controlla le dipendenze: le disponibilità del medico vengono rimosse dalla cascata configurata sul modello (comprese quelle già prenotate, in deroga al vincolo applicato da DELETE /admin/disponibilita/{id}), mentre restano righe orfane in medico_prestazione e appuntamento. Mitigazione operativa: eliminare
-  medici e prestazioni solo se non hanno prenotazioni collegate.
+  L'eliminazione di un medico o di una prestazione dall'area amministrativa non
+  controlla le dipendenze: le disponibilità del medico vengono rimosse dalla
+  cascata configurata sul modello (comprese quelle già prenotate, in deroga al
+  vincolo applicato da `DELETE /admin/disponibilita/{id}`), mentre restano righe
+  orfane in `medico_prestazione` e `appuntamento`. Mitigazione operativa:
+  eliminare medici e prestazioni solo se non hanno prenotazioni collegate.
 
 - **Chiave di firma dei token con valore predefinito.** `SECRET_KEY` viene letta
   dalla variabile d'ambiente omonima, ma in sua assenza `core/config.py` ricade
