@@ -25,7 +25,7 @@ disponibile su http://localhost:8000/docs a back-end avviato.
 | RF3 | Prestazioni per medico | `/medici/{id}/prestazioni` | `test_prestazioni_del_medico` |
 | RF4 | Prenotazione validata | `POST /appuntamenti` | `test_prenota_e_lista`, `test_slot_occupato_genera_conflitto`, `test_prenotazione_non_valida_bloccata` |
 | RF5 | Le mie prenotazioni / annullamento | `GET /appuntamenti`, `PATCH /appuntamenti/{id}` | `test_prenota_e_lista`, `test_paziente_non_annulla_due_volte` |
-| RF5b | Titolarita della prenotazione | `PATCH /appuntamenti/{id}` | `test_paziente_non_annulla_prenotazione_altrui` |
+| RF5b | Titolarità della prenotazione | `PATCH /appuntamenti/{id}` | `test_paziente_non_annulla_prenotazione_altrui` |
 | RF6 | Agenda operatore | `GET /appuntamenti/tutti` | `test_agenda_richiede_staff` |
 | RF7 | Gestione medici | `/admin/medici` | `test_crud_medico`, `test_rbac_*` |
 | RF8 | Gestione prestazioni | `/admin/prestazioni` | `test_crud_prestazione`, `test_prestazione_validazione` |
