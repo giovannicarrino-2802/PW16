@@ -17,9 +17,6 @@ class UtenteService:
     def lista(self):
         return self.repo.list()
 
-    def lista_pazienti(self):
-        return self.repo.list_pazienti()
-
     def dettaglio(self, utente_id):
         user = self.repo.get(utente_id)
         if user is None:
