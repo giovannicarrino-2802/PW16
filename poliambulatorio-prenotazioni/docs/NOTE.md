@@ -145,16 +145,11 @@ parte da uno stato diverso, e l'esecuzione in parallelo non è supportata.
 
 ## Limiti noti
 
-Scelte consapevoli o vincoli non risolti nella soluzione. Non impediscono l'uso
-previsto del prototipo.
+Non impediscono l'uso previsto del prototipo.
 
 - **Integrità referenziale non applicata dal database.** SQLite non verifica le
   foreign key se non viene attivato `PRAGMA foreign_keys=ON`, qui non impostato.
-  L'eliminazione di un medico o di una prestazione dall'area amministrativa non
-  controlla le dipendenze: restano righe orfane in `medico_prestazione`,
-  `disponibilità` e `appuntamento`. Poiché l'agenda (`list_tutti_dettaglio`)
-  usa una join su medico e prestazione, le prenotazioni orfane non compaiono
-  più nell'elenco anzichè generare un errore. Mitigazione operativa: eliminare
+  L'eliminazione di un medico o di una prestazione dall'area amministrativa non controlla le dipendenze: le disponibilità del medico vengono rimosse dalla cascata configurata sul modello (comprese quelle già prenotate, in deroga al vincolo applicato da DELETE /admin/disponibilita/{id}), mentre restano righe orfane in medico_prestazione e appuntamento. Mitigazione operativa: eliminare
   medici e prestazioni solo se non hanno prenotazioni collegate.
 
 - **Chiave di firma dei token con valore predefinito.** `SECRET_KEY` viene letta
