@@ -1,6 +1,6 @@
 # Ciclo di vita della prenotazione
 
-Stati ammessi per un `Appuntamento` e transizioni consentite.
+Stati ammessi per una prenotazione (entità `Appuntamento`) e transizioni consentite.
 
 ```mermaid
 stateDiagram-v2
