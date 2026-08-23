@@ -77,10 +77,3 @@ dal router direttamente tramite il repository, senza attraversare il livello
 dei servizi. Introdurre un servizio che si limiti a inoltrare la chiamata
 aggiungerebbe un livello senza contenuto; tutte le operazioni di scrittura e
 tutte quelle soggette a regole passano invece dai servizi.
-
-## Vedi anche
-
-- [`sequenza-prenotazione.md`](sequenza-prenotazione.md) — il flusso di
-  prenotazione attraverso i livelli qui descritti.
-- [`classi-prenotazione.md`](classi-prenotazione.md) — le classi che
-  concretizzano lo schema su una singola funzionalità.
