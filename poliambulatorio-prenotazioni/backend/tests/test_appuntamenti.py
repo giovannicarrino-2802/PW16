@@ -54,7 +54,7 @@ def test_slot_occupato_genera_conflitto():
                 json={"disponibilita_id": sid, "prestazione_id": pid})
     r2 = client.post("/api/v1/appuntamenti", headers=h,
                      json={"disponibilita_id": sid, "prestazione_id": pid})
-    assert r2.status_code in (404, 409)
+    assert r2.status_code == 409
 
 
 def test_prestazioni_del_medico():
