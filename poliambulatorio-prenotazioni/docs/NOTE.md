@@ -121,23 +121,23 @@ che lo rileva per primo.
 
 ## Suite di test
 
-I test condividono un unico database di sessione: `conftest.py` cancella e
+I test condividono un unico database di sessione, `conftest.py` cancella e
 ricrea `test_poliambulatorio.db` una sola volta all'avvio della suite, poi il
-seed lo ripopola. Non c'è isolamento fra file: ogni prenotazione consuma uno
+seed lo ripopola. Non c'è isolamento fra file, ogni prenotazione consuma uno
 slot, che i test successivi non trovano più fra quelli liberi. I test che
 hanno bisogno di risorse specifiche (medico, prestazione, slot) se le creano
 quindi tramite gli endpoint amministrativi anzichè attingere dal seed.
 
-Vanno eseguiti con `pytest` sull'intera cartella: lanciare un singolo file
+Vanno eseguiti con `pytest` sull'intera cartella. Lanciare un singolo file
 parte da uno stato diverso, e l'esecuzione in parallelo non è supportata.
 
 ## Note di implementazione
 
 - Il database conserva tutti i datetime (`inizio`, `fine`, `creato_il`, `ts`)
-  in forma naive, riferiti all'ora locale dell'ambulatorio: un solo orologio per
+  in forma naive, riferiti all'ora locale dell'ambulatorio. Un solo orologio per
   l'intero database, così un record di audit è direttamente confrontabile con
   l'orario di una prenotazione. Unica eccezione il claim `exp` del token JWT,
-  che per specifica è un timestamp UTC e non viene mai confrontato con i dati.
+  che per specifica è un timestamp UTC ma non viene mai confrontato con i dati.
 - La relazione molti-a-molti è modellata da `MedicoPrestazione`; la
   prenotazione verifica sempre `AppuntamentoRepository.medico_esegue(...)`.
 - Lo schema del database viene creato all'avvio da `Base.metadata.create_all()`
@@ -150,7 +150,7 @@ Non impediscono l'uso previsto del prototipo.
 - **Integrità referenziale non applicata dal database.** SQLite non verifica le
   foreign key se non viene attivato `PRAGMA foreign_keys=ON`, qui non impostato.
   L'eliminazione di un medico o di una prestazione dall'area amministrativa non
-  controlla le dipendenze: le disponibilità del medico vengono rimosse dalla
+  controlla le dipendenze, le disponibilità del medico vengono rimosse dalla
   cascata configurata sul modello (comprese quelle già prenotate, in deroga al
   vincolo applicato da `DELETE /admin/disponibilita/{id}`), mentre restano righe
   orfane in `medico_prestazione` e `appuntamento`. Mitigazione operativa:
@@ -160,7 +160,7 @@ Non impediscono l'uso previsto del prototipo.
   dalla variabile d'ambiente omonima, ma in sua assenza `core/config.py` ricade
   su un valore fisso di sviluppo (`"dev-secret-cambia-in-produzione"`). Questo
   consente di avviare la demo e la suite di test senza configurazione, ma in un
-  ambiente reale la variabile va impostata: chi conoscesse il default potrebbe
+  ambiente reale la variabile va impostata, chi conoscesse il default potrebbe
   altrimenti forgiare token JWT validi per qualsiasi utente e ruolo.
 
 - **Assenza di protezione contro i tentativi ripetuti di autenticazione.** Il sistema
@@ -170,6 +170,4 @@ Non impediscono l'uso previsto del prototipo.
 
 - **Audit log conservato oltre la vita dell'utente.** L'eliminazione di un utente
   rimuove il profilo paziente e le sue prenotazioni, ma non i record di
-  `audit_log`, che restano con un `utente_id` non più risolvibile. È una scelta
-  intenzionale: cancellare la tracciabilità delle azioni passate insieme
-  all'utente vanificherebbe lo scopo del log.
+  `audit_log`, che restano con un `utente_id` non più risolvibile.
