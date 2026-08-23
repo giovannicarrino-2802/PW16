@@ -163,6 +163,11 @@ Non impediscono l'uso previsto del prototipo.
   ambiente reale la variabile va impostata: chi conoscesse il default potrebbe
   altrimenti forgiare token JWT validi per qualsiasi utente e ruolo.
 
+- **Assenza di protezione contro i tentativi ripetuti di autenticazione.** Il sistema
+ non limita la frequenza dei tentativi di accesso. Si tratta di un rischio residuo 
+ accettato la cui mitigazione richiederebbe l'introduzione di un meccanismo di limitazione 
+ delle richieste, indicato tra gli sviluppi futuri.
+
 - **Audit log conservato oltre la vita dell'utente.** L'eliminazione di un utente
   rimuove il profilo paziente e le sue prenotazioni, ma non i record di
   `audit_log`, che restano con un `utente_id` non più risolvibile. È una scelta
