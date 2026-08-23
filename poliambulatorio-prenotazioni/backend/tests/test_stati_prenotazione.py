@@ -156,7 +156,7 @@ def test_riprogramma_solo_stesso_medico():
 
 
 def test_completa_prenotazione_gia_completata():
-    _, pid, slots = _scenario("Odontoiatria", "Visita odontoiatrica", "2031-01-17", n_slot=1)
+    _, pid, slots = _scenario("Odontoiatria", "Visita odontoiatrica", "2031-01-18", n_slot=1)
     op = _operatore()
     paziente_id = client.get("/api/v1/pazienti", headers=op).json()[0]["id"]
     app_id = client.post("/api/v1/appuntamenti/operatore", headers=op,
