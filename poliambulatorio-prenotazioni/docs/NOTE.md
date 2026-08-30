@@ -22,7 +22,7 @@ disponibile su http://localhost:8000/docs a back-end avviato.
 |---|---|---|---|
 | RF1 | Autenticazione | `/auth/login`, `/auth/me` | `test_login_demo`, `test_me_ritorna_ruolo` |
 | RF2 | Ricerca disponibilità | `/medici/{id}/disponibilita` | `test_prenota_e_lista` (indiretta) |
-| RF3 | Prestazioni per medico | `/medici/{id}/prestazioni` | `test_prestazioni_del_medico` |
+| RF3 | Prestazioni per medico e catalogo generale | `/medici/{id}/prestazioni`, `/prestazioni` | `test_prestazioni_del_medico` |
 | RF4 | Prenotazione validata | `POST /appuntamenti` | `test_prenota_e_lista`, `test_slot_occupato_genera_conflitto`, `test_prenotazione_non_valida_bloccata` |
 | RF5 | Le mie prenotazioni / annullamento | `GET /appuntamenti`, `PATCH /appuntamenti/{id}` | `test_prenota_e_lista`, `test_paziente_non_annulla_due_volte` |
 | RF5b | Titolarità della prenotazione | `PATCH /appuntamenti/{id}` | `test_paziente_non_annulla_prenotazione_altrui` |
@@ -32,7 +32,7 @@ disponibile su http://localhost:8000/docs a back-end avviato.
 | RF9 | Gestione disponibilità | `/admin/disponibilita` | `test_crud_disponibilita`, `test_disponibilita_intervallo_non_valido` |
 | RF10 | Associazioni medico-prestazione | `/admin/medici/{id}/prestazioni` | `test_associazione_medico_prestazione` |
 | RF11 | Audit | `AuditService` | `test_audit_registra_operazioni_admin` |
-| RF12 | Segreteria: prenota per conto, agenda, modifica | `/appuntamenti/operatore`, `/appuntamenti/tutti`, `PATCH /appuntamenti/tutti/{id}` | `test_segreteria_prenota_per_paziente_e_modifica` |
+| RF12 | Segreteria: prenota per conto, agenda, modifica, elenco pazienti | `/appuntamenti/operatore`, `/appuntamenti/tutti`, `PATCH /appuntamenti/tutti/{id}`, `/pazienti` | `test_segreteria_prenota_per_paziente_e_modifica` |
 | RF13 | Gestione utenti | `/admin/utenti` | `test_crud_utente_operatore`, `test_crea_utente_paziente_con_profilo`, `test_utenti_rbac_e_self_delete` |
 | RF14 | Stati terminali | `PATCH /appuntamenti/{id}`, `PATCH /appuntamenti/tutti/{id}` | `test_paziente_non_annulla_due_volte`, `test_segreteria_non_annulla_due_volte`, `test_riprogramma_solo_prenotazioni_attive`, `test_riprogramma_prenotazione_completata`, `test_riprogramma_solo_stesso_medico`, `test_riprogramma_su_slot_occupato`, `test_completa_prenotazione_gia_completata` |
 | RF15 | Integrità degli slot | `DELETE /admin/disponibilita/{id}` | `test_elimina_slot_prenotato_bloccata` |
