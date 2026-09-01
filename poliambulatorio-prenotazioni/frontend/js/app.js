@@ -653,7 +653,6 @@ function buildWeekdayChips() {
     lab.className = "wd-chip";
     const cb = document.createElement("input");
     cb.type = "checkbox"; cb.value = i;
-    if (i === 0 || i === 3) cb.checked = true; // default: lunedi e giovedi
     lab.appendChild(cb);
     lab.appendChild(document.createTextNode(" " + g));
     wrap.appendChild(lab);
