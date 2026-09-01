@@ -168,6 +168,14 @@ Non impediscono l'uso previsto del prototipo.
  accettato la cui mitigazione richiederebbe l'introduzione di un meccanismo di limitazione 
  delle richieste, indicato tra gli sviluppi futuri.
 
+ - **Nessuna coerenza verificata tra durata dello slot e durata della prestazione.**
+  La durata di uno slot è determinata al momento della generazione (`durata_min`
+  del generatore) ed è indipendente dal campo `durata_min` della prestazione poi
+  effettivamente prenotata. Il sistema non impedisce di prenotare una prestazione
+  la cui durata dichiarata eccede quella dello slot. Mitigazione operativa:
+  generare gli slot con una durata coerente con le prestazioni previste per il
+  medico.
+
 - **Audit log conservato oltre la vita dell'utente.** L'eliminazione di un utente
   rimuove il profilo paziente e le sue prenotazioni, ma non i record di
   `audit_log`, che restano con un `utente_id` non più risolvibile.
