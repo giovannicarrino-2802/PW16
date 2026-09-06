@@ -176,6 +176,9 @@ Non impediscono l'uso previsto del prototipo.
   generare gli slot con una durata coerente con le prestazioni previste per il
   medico.
 
-- **Audit log conservato oltre la vita dell'utente.** L'eliminazione di un utente
-  rimuove il profilo paziente e le sue prenotazioni, ma non i record di
-  `audit_log`, che restano con un `utente_id` non più risolvibile.
+- **Perdita di risolvibilità dell'audit log dopo l'eliminazione dell'utente.**
+  L'eliminazione di un utente rimuove il profilo paziente e le sue prenotazioni,
+  ma non i record di `audit_log`, che vengono conservati per non compromettere
+  la tracciabilità storica. Il campo `utente_id` diventa tuttavia irrisolvibile,
+  rendendo impossibile risalire a nome o ruolo dell'autore di un'operazione
+  passata.
