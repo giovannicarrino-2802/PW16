@@ -7,7 +7,8 @@ sequenceDiagram
     autonumber
     actor P as Paziente
     participant FE as Front-end
-    participant API as Router<br/>appuntamenti.py
+    participant API as Router<br/>medici.py / appuntamenti.py
+    participant MREPO as MedicoRepository
     participant SVC as AppuntamentoService
     participant REPO as AppuntamentoRepository
     participant AUD as AuditService
@@ -17,10 +18,10 @@ sequenceDiagram
 
     P->>FE: sceglie il medico
     FE->>API: GET /medici/{id}/prestazioni
-    API->>REPO: prestazioni_di(medico_id)
-    REPO->>DB: join medico_prestazione
-    DB-->>REPO: prestazioni del medico
-    REPO-->>API: elenco
+    API->>MREPO: prestazioni_di(medico_id)
+    MREPO->>DB: join medico_prestazione
+    DB-->>MREPO: prestazioni del medico
+    MREPO-->>API: elenco
     API-->>FE: 200 - solo prestazioni erogabili
     FE-->>P: popola la tendina prestazioni
 
@@ -69,9 +70,12 @@ sequenceDiagram
 
 ## Note
 
-- Il router non contiene regole applicative, invoca il service e restituisce
-  la risposta; le eccezioni di dominio diventano codici HTTP tramite gli
-  exception handler registrati in `main.py`.
+- Il router di prenotazione (`appuntamenti.py`) non contiene regole
+  applicative, invoca il service e restituisce la risposta; le eccezioni di
+  dominio diventano codici HTTP tramite gli exception handler registrati in
+  `main.py`.
+- Le letture della fase 1 non hanno regole di dominio e sono servite dal
+  router direttamente tramite i repository (cfr. `architettura.md`).
 - I rami di errore sono i controlli di
   `AppuntamentoService._valida_slot_prestazione`, condivisi con la prenotazione
   della segreteria (`POST /appuntamenti/operatore`). La verifica `medico_esegue`
