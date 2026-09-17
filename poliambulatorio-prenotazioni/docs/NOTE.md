@@ -77,8 +77,7 @@ Legenda: **X** consentito - **-** negato (`403`) - **n/a** non applicabile al ru
 Gli endpoint marcati **n/a** richiedono un profilo paziente collegato
 all'utente: un account di segreteria non ne ha uno e riceve `403` da
 `get_current_paziente`. Senza token qualsiasi endpoint protetto risponde `401`.
-L'admin non può eliminare il proprio account (`403`), per non lasciare il
-sistema privo di amministratori.
+L'admin non può eliminare il proprio account (`403`).
 
 ### Azioni di audit registrate
 
